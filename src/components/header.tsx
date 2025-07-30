@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import {
   User,
@@ -10,6 +10,7 @@ import {
   Twitter,
   Facebook,
   Linkedin,
+  Menu,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -20,9 +21,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
+import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
+import { Sidebar } from './sidebar';
 
 export function Header() {
   const { toast } = useToast();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleShare = (platform: 'twitter' | 'facebook' | 'linkedin' | 'copy') => {
     const url = window.location.href;
@@ -52,7 +56,19 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
         <div className="mr-4 flex items-center">
-          <Link href="/" className="mr-2 flex items-center space-x-2">
+          <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="mr-2">
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Toggle Sidebar</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-72">
+              <Sidebar onLinkClick={() => setIsSidebarOpen(false)} />
+            </SheetContent>
+          </Sheet>
+
+          <Link href="/" className="flex items-center space-x-2">
             <span className="font-bold sm:inline-block">VTech AI</span>
           </Link>
         </div>
