@@ -69,7 +69,7 @@ export function useChat(chatId: string | null) {
           }
         });
       } else {
-        const newSession = await createNewChatSession(user.id);
+        const newSession = createNewChatSession(user.id);
         setSession(newSession);
         setMessages(newSession.messages);
       }
@@ -148,7 +148,7 @@ export function useChat(chatId: string | null) {
       }
       
       const loadingMessageId = `${Date.now()}`;
-      setMessages((prev) => [...prev, { id: loadingMessageId, role: 'assistant', content: '...', userId: user.id }]);
+      setMessages((prev) => [...prev, { id: loadingMessageId, role: 'assistant', content: '...', userId: 'assistant' }]);
 
       try {
         const { aiStyle, aiModel } = settings;
@@ -224,7 +224,7 @@ export function useChat(chatId: string | null) {
           content: userFriendlyMessage,
           id: loadingMessageId,
           role: 'assistant',
-          userId: user.id
+          userId: 'assistant'
         });
         toast({
           title: 'Error',

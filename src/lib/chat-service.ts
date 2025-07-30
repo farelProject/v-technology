@@ -1,3 +1,4 @@
+
 'use server';
 
 import { promises as fs } from 'fs';
@@ -11,6 +12,10 @@ type ChatDatabase = Record<string, ChatSession[]>;
 async function readChatDatabase(): Promise<ChatDatabase> {
   try {
     const data = await fs.readFile(chatDbPath, 'utf-8');
+    // If the file is empty, return an empty object
+    if (!data) {
+        return {};
+    }
     return JSON.parse(data);
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {

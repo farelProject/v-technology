@@ -75,6 +75,25 @@
           "type": "text"
         }
       ]
+    },
+    {
+      "id": "1753882980751",
+      "title": "Apa itu kecerdasan buatan?...",
+      "timestamp": "2025-07-30T13:43:00.751Z",
+      "messages": [
+        {
+          "id": "1753882983171-0.07928040709898243",
+          "role": "user",
+          "content": "Apa itu kecerdasan buatan?",
+          "isLoading": false
+        },
+        {
+          "id": "1753882983172",
+          "role": "assistant",
+          "content": "Kecerdasan Buatan (Artificial Intelligence atau AI) itu keren banget! Singkatnya, AI adalah kemampuan komputer atau mesin untuk melakukan hal-hal yang biasanya membutuhkan kecerdasan manusia. Contohnya:\n\n*   **Belajar:** Seperti manusia, AI bisa belajar dari data. Semakin banyak data yang diberikan, semakin pintar AI itu!\n*   **Memecahkan Masalah:** AI bisa mencari solusi untuk masalah yang kompleks dengan cepat.\n*   **Pengenalan Pola:** AI jago banget menemukan pola tersembunyi dalam data. Ini berguna untuk banyak hal, seperti mendeteksi penipuan atau memprediksi tren.\n*   **Memahami Bahasa Alami:** AI bisa mengerti bahasa manusia, lho! Jadi, kita bisa berinteraksi dengan komputer seperti berbicara dengan teman.\n\nSebagai programmer, aku sering pakai AI untuk:\n\n*   **Otomatisasi Tugas:** Biar gak capek, aku pakai AI untuk mengerjakan tugas-tugas yang berulang.\n*   **Menganalisis Kode:** AI bisa membantu menemukan bug atau celah keamanan dalam kodeku.\n*   **Membuat Rekomendasi:** AI bisa memberikan saran tentang cara meningkatkan performa aplikasi.\n\nIntinya, AI itu alat yang sangat powerful yang bisa membantu kita melakukan banyak hal dengan lebih efisien dan efektif! Seru, kan?",
+          "type": "text"
+        }
+      ]
     }
   ],
   "1753853813182": [

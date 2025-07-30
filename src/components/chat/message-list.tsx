@@ -35,7 +35,8 @@ export function MessageList({
   };
 
   // Show suggestions if messages are loaded, the list is empty, it's a new chat, user is logged in, and not loading.
-  const showSuggestions = isNewChat && messages && messages.length === 0 && !isLoading && user;
+  const showSuggestions =
+    isNewChat && messages && messages.length === 0 && !isLoading && user;
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8">
@@ -43,12 +44,21 @@ export function MessageList({
         <SuggestedQuestions onQuestionClick={handleQuestionClick} />
       )}
       <div className="space-y-6">
-        {messages && messages.map((msg) => (
-          <ChatMessage key={msg.id} message={msg} />
-        ))}
-        {isLoading && messages.length > 0 && messages[messages.length -1].role === 'user' &&(
-          <ChatMessage key="loading" message={{id: 'loading', role: 'assistant', content: '...'}} />
-        )}
+        {messages &&
+          messages.map((msg) => <ChatMessage key={msg.id} message={msg} />)}
+        {isLoading &&
+          messages.length > 0 &&
+          messages[messages.length - 1].role === 'user' && (
+            <ChatMessage
+              key="loading"
+              message={{
+                id: 'loading',
+                role: 'assistant',
+                content: '...',
+                userId: 'assistant', // Required prop
+              }}
+            />
+          )}
       </div>
       <div ref={scrollRef} />
     </div>
