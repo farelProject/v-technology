@@ -47,7 +47,7 @@ export async function registerUser({ name, email, password }: any) {
   users.push(newUser);
   await writeUsers(users);
 
-  return { success: true, user: { name: newUser.name, email: newUser.email } };
+  return { success: true, user: {id: newUser.id, name: newUser.name, email: newUser.email } };
 }
 
 export async function loginUser({ email, password }: any): Promise<{success: boolean, message?: string, user?: User}> {
@@ -63,7 +63,7 @@ export async function loginUser({ email, password }: any): Promise<{success: boo
     return { success: false, message: 'Invalid email or password.' };
   }
 
-  return { success: true, user: { name: user.name, email: user.email } };
+  return { success: true, user: { id: user.id, name: user.name, email: user.email } };
 }
 
 export async function deleteUser(email: string) {
@@ -76,6 +76,21 @@ export async function deleteUser(email: string) {
 
   users.splice(userIndex, 1);
   await writeUsers(users);
+
+  // Also delete user's chats
+  try {
+    const chatDbPath = path.join(process.cwd(), 'src', 'data', 'chats.json');
+    const allChats = JSON.parse(await fs.readFile(chatDbPath, 'utf-8'));
+    const userIdToDelete = users[userIndex]?.id;
+    if (userIdToDelete && allChats[userIdToDelete]) {
+        delete allChats[userIdToDelete];
+        await fs.writeFile(chatDbPath, JSON.stringify(allChats, null, 2), 'utf-8');
+    }
+  } catch (error) {
+    // Ignore if chats file doesn't exist or other errors
+    console.error("Could not delete user chats:", error);
+  }
+
 
   return { success: true, message: 'User deleted successfully.' };
 }

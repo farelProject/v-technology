@@ -5,15 +5,23 @@ import type { Message } from '@/lib/types';
 import { ChatMessage } from './chat-message';
 import { SuggestedQuestions } from './suggested-questions';
 import type { AiMode } from '@/lib/types';
+import { useAuth } from '@/contexts/auth-context';
 
 interface MessageListProps {
   messages: Message[];
   isLoading: boolean;
   onSend: (mode: AiMode, message: string, fileDataUri?: string) => void;
+  isNewChat: boolean;
 }
 
-export function MessageList({ messages, isLoading, onSend }: MessageListProps) {
+export function MessageList({
+  messages,
+  isLoading,
+  onSend,
+  isNewChat,
+}: MessageListProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -25,16 +33,17 @@ export function MessageList({ messages, isLoading, onSend }: MessageListProps) {
     onSend('chat', question);
   };
 
+  const showSuggestions = messages.length === 0 && !isLoading && isNewChat && user;
+
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8">
-      {messages.length === 0 && !isLoading && (
+      {showSuggestions && (
         <SuggestedQuestions onQuestionClick={handleQuestionClick} />
       )}
       <div className="space-y-6">
         {messages.map((msg) => (
           <ChatMessage key={msg.id} message={msg} />
         ))}
-        {/* The loading message is now handled optimistically in useChat hook */}
       </div>
       <div ref={scrollRef} />
     </div>

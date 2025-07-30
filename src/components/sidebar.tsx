@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { Home, MessageSquare, Heart, Info, LogIn, User, LogOut } from 'lucide-react';
+import { Home, MessageSquare, Heart, Info, LogIn, User, LogOut, PlusSquare, History } from 'lucide-react';
 import { ScrollArea } from './ui/scroll-area';
 import { useAuth } from '@/contexts/auth-context';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from './ui/button';
+import { Separator } from './ui/separator';
 
 interface SidebarProps {
     onLinkClick?: () => void;
@@ -33,28 +34,58 @@ export function Sidebar({ onLinkClick }: SidebarProps) {
         <h2 className="text-lg font-semibold">Menu</h2>
       </div>
        <ScrollArea className="flex-1">
-        <nav className="space-y-1 px-2 py-4">
-            <Link href="/" className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800" onClick={handleLinkClick}>
-                <Home className="mr-3 h-5 w-5" />
-                Home
-            </Link>
+        <nav className="flex flex-col space-y-1 px-2 py-4">
             {user && (
-                <Link href="/profile" className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800" onClick={handleLinkClick}>
-                    <User className="mr-3 h-5 w-5" />
-                    Profile
+                <>
+                    <Link href="/" passHref>
+                        <Button variant="ghost" className="w-full justify-start" onClick={handleLinkClick}>
+                            <PlusSquare className="mr-3 h-5 w-5" />
+                            New Chat
+                        </Button>
+                    </Link>
+                    <Link href="/history" passHref>
+                        <Button variant="ghost" className="w-full justify-start" onClick={handleLinkClick}>
+                           <History className="mr-3 h-5 w-5" />
+                           Chat History
+                        </Button>
+                    </Link>
+                </>
+            )}
+
+            <Separator className="my-2" />
+            
+            <Link href="/" passHref>
+                 <Button variant="ghost" className="w-full justify-start" onClick={handleLinkClick}>
+                    <Home className="mr-3 h-5 w-5" />
+                    Home
+                 </Button>
+            </Link>
+
+            {user && (
+                <Link href="/profile" passHref>
+                    <Button variant="ghost" className="w-full justify-start" onClick={handleLinkClick}>
+                        <User className="mr-3 h-5 w-5" />
+                        Profile
+                    </Button>
                 </Link>
             )}
-            <Link href="/feedback" className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800" onClick={handleLinkClick}>
-                <MessageSquare className="mr-3 h-5 w-5" />
-                Feedback
+            <Link href="/feedback" passHref>
+                 <Button variant="ghost" className="w-full justify-start" onClick={handleLinkClick}>
+                    <MessageSquare className="mr-3 h-5 w-5" />
+                    Feedback
+                 </Button>
             </Link>
-            <Link href="/about" className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800" onClick={handleLinkClick}>
-                <Info className="mr-3 h-5 w-5" />
-                About Web
+            <Link href="/about" passHref>
+                 <Button variant="ghost" className="w-full justify-start" onClick={handleLinkClick}>
+                    <Info className="mr-3 h-5 w-5" />
+                    About Web
+                 </Button>
             </Link>
-            <Link href="/credits" className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800" onClick={handleLinkClick}>
-                <Heart className="mr-3 h-5 w-5" />
-                Donate
+            <Link href="/credits" passHref>
+                 <Button variant="ghost" className="w-full justify-start" onClick={handleLinkClick}>
+                    <Heart className="mr-3 h-5 w-5" />
+                    Donate
+                 </Button>
             </Link>
         </nav>
       </ScrollArea>
@@ -62,15 +93,17 @@ export function Sidebar({ onLinkClick }: SidebarProps) {
          {user ? (
             <div className='space-y-2'>
                 <p className='text-sm text-center text-muted-foreground'>Signed in as {user.name}</p>
-                <Button variant="ghost" className="w-full justify-start" onClick={handleLogout}>
+                <Button variant="outline" className="w-full justify-start" onClick={handleLogout}>
                     <LogOut className="mr-3 h-5 w-5" />
                     Logout
                 </Button>
             </div>
          ) : (
-            <Link href="/login" className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800" onClick={handleLinkClick}>
-                <LogIn className="mr-3 h-5 w-5" />
-                Login / Register
+            <Link href="/login" passHref>
+                 <Button variant="outline" className="w-full justify-start" onClick={handleLinkClick}>
+                    <LogIn className="mr-3 h-5 w-5" />
+                    Login / Register
+                </Button>
             </Link>
          )}
       </div>

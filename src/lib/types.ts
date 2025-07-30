@@ -19,14 +19,22 @@ export interface Settings {
 
 // For client-side use, without sensitive data
 export interface User {
+  id: string;
   name: string;
   email: string;
 }
 
 // Represents the full user object stored in the database
 export interface StoredUser extends User {
-    id: string;
     password?: string; // Hashed password
     resetPasswordToken?: string | null;
     resetPasswordExpires?: number | null;
+}
+
+export interface ChatSession {
+    id: string;
+    userId: string;
+    title: string;
+    timestamp: string;
+    messages: Message[];
 }
