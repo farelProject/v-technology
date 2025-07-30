@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import type { Message } from '@/lib/types';
 import { CodeBlock } from './code-block';
 import { Separator } from '../ui/separator';
+import { motion } from 'framer-motion';
 
 interface ChatMessageProps {
   message: Message;
@@ -71,8 +72,6 @@ const parseMessageContent = (content: string) => {
 };
 
 const ImageDisplay = ({ src, alt }: { src: string; alt: string }) => {
-  const isUserUpload = !src.startsWith('data:image/png;base64,');
-
   return (
   <Dialog>
     <DialogTrigger asChild>
@@ -145,8 +144,21 @@ export function ChatMessage({ message }: ChatMessageProps) {
   const isUploadedFileUrl = (url?: string): url is string => {
       return !!url && url.startsWith('data:');
   }
+  
+  const messageVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
 
-  return (
+  const wrapper = (content: React.ReactNode) => {
+    if (isAssistant) {
+        return <motion.div initial="hidden" animate="visible" variants={messageVariants} transition={{ duration: 0.3 }}>{content}</motion.div>
+    }
+    return <>{content}</>;
+  }
+
+
+  return wrapper(
     <div className={cn('flex items-start space-x-4', isUser && 'justify-end')}>
       {isAssistant && (
         <Avatar className="h-8 w-8">
