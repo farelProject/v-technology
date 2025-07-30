@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
+import { registerUser, loginUser } from '@/lib/auth-service';
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   type: 'login' | 'register' | 'forgot-password';
@@ -30,24 +30,20 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
     setIsLoading(true);
 
     if (type === 'login') {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        toast({
-          title: 'Login Failed',
-          description: error.message,
-          variant: 'destructive',
-        });
-      } else {
+      const result = await loginUser({ email, password });
+      if (result.success) {
         toast({
           title: 'Login Successful',
           description: 'Redirecting you to the main app...',
         });
         router.push('/');
         router.refresh();
+      } else {
+        toast({
+          title: 'Login Failed',
+          description: result.message,
+          variant: 'destructive',
+        });
       }
     } else if (type === 'register') {
       if (password !== confirmPassword) {
@@ -59,48 +55,27 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
         setIsLoading(false);
         return;
       }
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: name,
-          },
-        },
-      });
-
-      if (error) {
-        toast({
-          title: 'Registration Failed',
-          description: error.message,
-          variant: 'destructive',
-        });
-      } else {
+      const result = await registerUser({ name, email, password });
+      if (result.success) {
         toast({
           title: 'Registration Successful',
-          description: 'Please check your email to verify your account.',
+          description: 'You can now log in.',
         });
         router.push('/login');
+      } else {
+        toast({
+          title: 'Registration Failed',
+          description: result.message,
+          variant: 'destructive',
+        });
       }
     } else if (type === 'forgot-password') {
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/reset-password`,
-        });
-
-        if (error) {
-            toast({
-                title: 'Error',
-                description: error.message,
-                variant: 'destructive',
-            });
-        } else {
-            toast({
-                title: 'Password Reset Email Sent',
-                description: 'Please check your email for a link to reset your password.',
-            });
-        }
+      // This is a placeholder as email sending is not implemented
+      toast({
+        title: 'Feature Not Implemented',
+        description: 'Password reset functionality is not available in this local version.',
+      });
     }
-
 
     setIsLoading(false);
   }
@@ -148,7 +123,7 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-       <div className="grid gap-2">
+      <div className="grid gap-2">
         <Label htmlFor="confirm-password">Confirm Password</Label>
         <Input
           id="confirm-password"
@@ -164,44 +139,8 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
   );
 
   const renderLoginFields = () => (
-     <>
-        <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              placeholder="name@example.com"
-              type="email"
-              autoCapitalize="none"
-              autoComplete="email"
-              autoCorrect="off"
-              disabled={isLoading}
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="grid gap-2">
-            <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Link href="/forgot-password" passHref className="text-sm text-primary hover:underline underline-offset-4">
-                    Forgot Password?
-                </Link>
-            </div>
-            <Input
-              id="password"
-              type="password"
-              disabled={isLoading}
-              required
-              minLength={6}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-     </>
-  );
-  
-  const renderForgotPasswordFields = () => (
-     <div className="grid gap-2">
+    <>
+      <div className="grid gap-2">
         <Label htmlFor="email">Email</Label>
         <Input
           id="email"
@@ -216,14 +155,49 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
           onChange={(e) => setEmail(e.target.value)}
         />
       </div>
+      <div className="grid gap-2">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password">Password</Label>
+          <Link href="/forgot-password" passHref className="text-sm text-primary hover:underline underline-offset-4">
+            Forgot Password?
+          </Link>
+        </div>
+        <Input
+          id="password"
+          type="password"
+          disabled={isLoading}
+          required
+          minLength={6}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
+    </>
   );
 
+  const renderForgotPasswordFields = () => (
+    <div className="grid gap-2">
+      <Label htmlFor="email">Email</Label>
+      <Input
+        id="email"
+        placeholder="name@example.com"
+        type="email"
+        autoCapitalize="none"
+        autoComplete="email"
+        autoCorrect="off"
+        disabled={isLoading}
+        required
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+    </div>
+  );
 
   const getTitle = () => {
     switch (type) {
-        case 'login': return 'Sign In';
-        case 'register': return 'Create Account';
-        case 'forgot-password': return 'Reset Password';
+      case 'login': return 'Sign In';
+      case 'register': return 'Create Account';
+      case 'forgot-password': return 'Reset Password';
     }
   }
 
@@ -231,9 +205,9 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
     <div className={cn('grid gap-6', className)} {...props}>
       <form onSubmit={onSubmit}>
         <div className="grid gap-4">
-            {type === 'register' && renderRegisterFields()}
-            {type === 'login' && renderLoginFields()}
-            {type === 'forgot-password' && renderForgotPasswordFields()}
+          {type === 'register' && renderRegisterFields()}
+          {type === 'login' && renderLoginFields()}
+          {type === 'forgot-password' && renderForgotPasswordFields()}
 
           <Button disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -253,7 +227,7 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
           </span>
         </div>
       </div>
-       {type === 'login' && (
+      {type === 'login' && (
         <p className="px-8 text-center text-sm text-muted-foreground">
           <Link href="/register" className="underline underline-offset-4 hover:text-primary">
             Don't have an account? Sign Up
@@ -261,7 +235,7 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
         </p>
       )}
       {(type === 'register' || type === 'forgot-password') && (
-         <p className="px-8 text-center text-sm text-muted-foreground">
+        <p className="px-8 text-center text-sm text-muted-foreground">
           <Link href="/login" className="underline underline-offset-4 hover:text-primary">
             Sign In
           </Link>
