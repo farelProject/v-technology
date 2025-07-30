@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { getUserByResetToken, resetPassword } from '@/lib/auth-service';
 import Link from 'next/link';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 function maskEmail(email: string) {
@@ -26,6 +26,8 @@ function maskEmail(email: string) {
 export default function ResetPasswordPage({ params }: { params: { email: string } }) {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isResetting, setIsResetting] = useState(false);
   const [isValidToken, setIsValidToken] = useState(false);
@@ -120,27 +122,61 @@ export default function ResetPasswordPage({ params }: { params: { email: string 
           <form onSubmit={handleResetSubmit} className="grid gap-4">
              <div className="grid gap-2">
                 <Label htmlFor="new-password">New Password</Label>
-                <Input
-                    id="new-password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    disabled={isResetting}
-                />
+                <div className="relative">
+                  <Input
+                      id="new-password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={6}
+                      disabled={isResetting}
+                      className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                    <span className="sr-only">Toggle password visibility</span>
+                  </Button>
+                </div>
              </div>
              <div className="grid gap-2">
                 <Label htmlFor="confirm-password">Confirm New Password</Label>
-                <Input
-                    id="confirm-password"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    disabled={isResetting}
-                />
+                <div className="relative">
+                  <Input
+                      id="confirm-password"
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                      minLength={6}
+                      disabled={isResetting}
+                      className="pr-10"
+                  />
+                   <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                    <span className="sr-only">Toggle confirm password visibility</span>
+                  </Button>
+                </div>
              </div>
 
             <Button type="submit" disabled={isResetting} className="w-full">

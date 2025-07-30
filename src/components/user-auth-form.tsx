@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { registerUser, loginUser } from '@/lib/auth-service';
 import { useAuth } from '@/contexts/auth-context';
@@ -22,6 +22,8 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [confirmPassword, setConfirmPassword] = React.useState('');
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
   const { toast } = useToast();
   const router = useRouter();
@@ -109,27 +111,61 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
       </div>
       <div className="grid gap-2">
         <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          type="password"
-          disabled={isLoading}
-          required
-          minLength={6}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="relative">
+          <Input
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            disabled={isLoading}
+            required
+            minLength={6}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="pr-10"
+          />
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+            <span className="sr-only">Toggle password visibility</span>
+          </Button>
+        </div>
       </div>
       <div className="grid gap-2">
         <Label htmlFor="confirm-password">Confirm Password</Label>
-        <Input
-          id="confirm-password"
-          type="password"
-          disabled={isLoading}
-          required
-          minLength={6}
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
+        <div className="relative">
+          <Input
+            id="confirm-password"
+            type={showConfirmPassword ? 'text' : 'password'}
+            disabled={isLoading}
+            required
+            minLength={6}
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="pr-10"
+          />
+           <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+            onClick={() => setShowConfirmPassword((prev) => !prev)}
+          >
+            {showConfirmPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+            <span className="sr-only">Toggle confirm password visibility</span>
+          </Button>
+        </div>
       </div>
     </>
   );
@@ -158,15 +194,32 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
             Forgot Password?
           </Link>
         </div>
-        <Input
-          id="password"
-          type="password"
-          disabled={isLoading}
-          required
-          minLength={6}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="relative">
+          <Input
+            id="password"
+            type={showPassword ? 'text' : 'password'}
+            disabled={isLoading}
+            required
+            minLength={6}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="pr-10"
+          />
+           <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+            onClick={() => setShowPassword((prev) => !prev)}
+          >
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
+            <span className="sr-only">Toggle password visibility</span>
+          </Button>
+        </div>
       </div>
     </>
   );
