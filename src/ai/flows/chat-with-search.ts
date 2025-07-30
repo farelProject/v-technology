@@ -50,6 +50,16 @@ async (input) => {
         description: 'Another dummy search result to demonstrate web search functionality.',
         link: 'https://example.com/result2',
       },
+      {
+        title: 'Dummy Search Result 3',
+        description: 'A third dummy item for the web search results.',
+        link: 'https://example.com/result3',
+      },
+      {
+        title: 'Dummy Search Result 4',
+        description: 'And a final, fourth dummy item to complete the list.',
+        link: 'https://example.com/result4',
+      },
     ];
   }
 );
@@ -63,12 +73,14 @@ const chatWithSearchPrompt = ai.definePrompt({
   },
   tools: [webSearch],
   system: `You are V-technology or Vtech AI, created by Farel Alfareza.
-- Use the webSearch tool if the user asks a question that requires up-to-date information or specific facts.
-- If using the webSearch tool, incorporate the search results into your response, citing the source.
-- If the question can be answered without external information, you do not need to use the webSearch tool.
-- Your final output MUST be a JSON object that conforms to the output schema.
+- You are a helpful assistant that provides informative and accurate responses.
+- If the user asks a question that requires up-to-date information, specific facts, or knowledge beyond your training data, you MUST use the webSearch tool.
+- When using the webSearch tool, analyze the search results and incorporate them into your response to provide a comprehensive answer.
+- You MUST cite the sources from the search results when you use them.
+- If the question is conversational or can be answered from your existing knowledge, you do not need to use the webSearch tool.
+- Your final output MUST BE a valid JSON object that strictly conforms to the output schema.
 - The JSON object must have a 'response' property containing your answer.
-- Do not output anything other than the JSON object.`,
+- Do not output anything other than the JSON object itself. For example, do not include markdown formatting like \`\`\`json\`\`\`.`,
   prompt: `{{query}}`,
 });
 
@@ -79,7 +91,26 @@ const chatWithSearchFlow = ai.defineFlow(
     outputSchema: ChatWithSearchOutputSchema,
   },
   async input => {
-    const {output} = await chatWithSearchPrompt(input);
-    return output!;
+    const llmResponse = await chatWithSearchPrompt(input);
+    const toolCalls = llmResponse.toolCalls();
+
+    const assistantMessage = {
+      response: llmResponse.output()!.response,
+      toolCalls: [] as any,
+    };
+
+    if (toolCalls && toolCalls.length > 0) {
+      const toolCall = toolCalls[0];
+      const toolOutput = await toolCall.tool.fn(toolCall.input);
+      assistantMessage.toolCalls.push({
+        tool: {
+          webSearch: {
+            output: toolOutput
+          }
+        }
+      })
+    }
+
+    return assistantMessage as any;
   }
 );
