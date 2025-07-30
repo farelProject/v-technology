@@ -110,7 +110,12 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
         />
       </div>
       <div className="grid gap-2">
-        <Label htmlFor="password">Password</Label>
+        <div className="flex items-center justify-between">
+            <Label htmlFor="password">Password</Label>
+            <Button variant="link" size="sm" className="h-auto p-0 text-xs" asChild>
+                <Link href="/password-generator" target="_blank">Generate</Link>
+            </Button>
+        </div>
         <div className="relative">
           <Input
             id="password"
