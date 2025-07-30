@@ -23,14 +23,15 @@ export function useChat() {
       content: input,
       image_url: fileDataUri,
     };
-    setMessages((prev) => [...prev, userMessage]);
+    
+    // Add user message and a loading message optimistically
+    const loadingMessageId = (Date.now() + 1).toString();
+    setMessages((prev) => [
+      ...prev,
+      userMessage,
+      { id: loadingMessageId, role: 'assistant', content: '...' },
+    ]);
 
-    const loadingMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      role: 'assistant',
-      content: '...',
-    };
-    setMessages((prev) => [...prev, loadingMessage]);
 
     startTransition(async () => {
       try {
@@ -42,7 +43,7 @@ export function useChat() {
         if (mode === 'chat') {
            const result = await chat({ query: queryWithInstruction, file: fileDataUri });
            assistantMessage = {
-             id: loadingMessage.id,
+             id: loadingMessageId,
              role: 'assistant',
              content: result.response,
              type: 'text',
@@ -50,7 +51,7 @@ export function useChat() {
         } else if (mode === 'search') {
           const result = await chatWithSearch({ query: queryWithInstruction, file: fileDataUri });
           assistantMessage = {
-            id: loadingMessage.id,
+            id: loadingMessageId,
             role: 'assistant',
             content: result.response,
             type: 'text',
@@ -59,7 +60,7 @@ export function useChat() {
         } else if (mode === 'image') {
           const result = await generateImage({ prompt: input });
           assistantMessage = {
-            id: loadingMessage.id,
+            id: loadingMessageId,
             role: 'assistant',
             content: `Here is the image you requested for: "${input}"`,
             type: 'image',
@@ -69,8 +70,9 @@ export function useChat() {
             throw new Error(`Unknown mode: ${mode}`);
         }
         
+        // Replace the loading message with the actual response
         setMessages((prev) =>
-            prev.map((m) => (m.id === loadingMessage.id ? assistantMessage : m))
+            prev.map((m) => (m.id === loadingMessageId ? assistantMessage : m))
         );
 
       } catch (error) {
@@ -80,7 +82,8 @@ export function useChat() {
           description: 'Failed to get response from AI. Please try again.',
           variant: 'destructive',
         });
-        setMessages((prev) => prev.filter((m) => m.id !== loadingMessage.id));
+        // Remove the loading message if an error occurs
+        setMessages((prev) => prev.filter((m) => m.id !== loadingMessageId));
       }
     });
   };

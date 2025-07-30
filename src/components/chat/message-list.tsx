@@ -34,9 +34,7 @@ export function MessageList({ messages, isLoading, onSend }: MessageListProps) {
         {messages.map((msg) => (
           <ChatMessage key={msg.id} message={msg} />
         ))}
-        {isLoading && messages[messages.length-1]?.role !== 'assistant' && (
-           <ChatMessage message={{id: 'loading', role: 'assistant', content: '...'}} />
-        )}
+        {/* The loading message is now handled optimistically in useChat hook */}
       </div>
       <div ref={scrollRef} />
     </div>

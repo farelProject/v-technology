@@ -29,7 +29,6 @@ export function SuggestedQuestions({ onQuestionClick }: SuggestedQuestionsProps)
       <Carousel
         opts={{
           align: 'start',
-          loop: true,
         }}
         className="w-full"
       >
@@ -41,7 +40,7 @@ export function SuggestedQuestions({ onQuestionClick }: SuggestedQuestionsProps)
                   className="cursor-pointer hover:bg-accent transition-colors"
                   onClick={() => onQuestionClick(question)}
                 >
-                  <CardContent className="flex items-center justify-center p-4">
+                  <CardContent className="flex h-24 items-center justify-center p-4">
                     <span className="text-sm font-medium text-center">{question}</span>
                   </CardContent>
                 </Card>
