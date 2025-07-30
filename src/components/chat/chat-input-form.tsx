@@ -11,9 +11,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import type { AiMode } from '@/lib/types';
-import { useSettings } from '@/contexts/settings-context';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Label } from '../ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '../ui/badge';
 
@@ -52,7 +49,6 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
   const [input, setInput] = useState('');
   const [mode, setMode] = useState<AiMode>('chat');
   const [isListening, setIsListening] = useState(false);
-  const { settings, setSettings } = useSettings();
   const recognitionRef = useRef<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -160,30 +156,6 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="rounded-lg border bg-card p-2 shadow-sm">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-2">
-            <div>
-                <Label htmlFor="ai-style" className="text-xs">Gaya AI</Label>
-                <Select value={settings.aiStyle} onValueChange={(value) => setSettings(s => ({...s, aiStyle: value as any}))}>
-                    <SelectTrigger id="ai-style"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="Ceria">Ceria</SelectItem>
-                        <SelectItem value="Gaul">Gaul</SelectItem>
-                        <SelectItem value="Professional">Professional</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-            <div>
-                <Label htmlFor="ai-model" className="text-xs">Model AI</Label>
-                <Select value={settings.aiModel} onValueChange={(value) => setSettings(s => ({...s, aiModel: value as any}))}>
-                    <SelectTrigger id="ai-model"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="Asisten">Asisten</SelectItem>
-                        <SelectItem value="Programmer">Programmer</SelectItem>
-                        <SelectItem value="Dokter">Dokter</SelectItem>
-                    </SelectContent>
-                </Select>
-            </div>
-        </div>
         {selectedFile && (
             <div className="p-2">
                 <Badge variant="secondary">

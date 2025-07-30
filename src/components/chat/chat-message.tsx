@@ -47,26 +47,30 @@ function VTechIcon(props: React.SVGProps<SVGSVGElement>) {
 const parseMessageContent = (content: string) => {
   const parts = content.split(/(```[\s\S]*?```)/g);
   return parts.map((part, index) => {
+    // Match language-specific or plain code blocks
     const codeMatch = part.match(/```(\w*)\n([\s\S]*?)```/);
     if (codeMatch) {
-      const language = codeMatch[1] || 'text';
+      const language = codeMatch[1] || 'bash'; // Default to bash if no language specified
       const code = codeMatch[2];
       return <CodeBlock key={index} language={language} code={code} />;
     }
     // Don't render empty strings
     if (!part) return null;
     return (
-      <p key={index} className="whitespace-pre-wrap">
+      <p key={index} className="whitespace-pre-wrap leading-relaxed">
         {part}
       </p>
     );
   });
 };
 
-const ImageDisplay = ({ src, alt }: { src: string; alt: string }) => (
+const ImageDisplay = ({ src, alt }: { src: string; alt: string }) => {
+  const isUserUpload = !src.startsWith('data:image/png;base64,');
+
+  return (
   <Dialog>
     <DialogTrigger asChild>
-      <div className="relative group w-40 h-40 cursor-pointer">
+      <div className="relative group w-40 h-40 cursor-pointer my-2">
         <Image
           src={src}
           alt={alt}
@@ -90,7 +94,8 @@ const ImageDisplay = ({ src, alt }: { src: string; alt: string }) => (
       />
     </DialogContent>
   </Dialog>
-);
+  )
+};
 
 
 export function ChatMessage({ message }: ChatMessageProps) {
@@ -127,9 +132,13 @@ export function ChatMessage({ message }: ChatMessageProps) {
     }
   };
 
-  const isImageUrl = (url?: string): url is string => {
-    return !!url && url.startsWith('data:image/');
+  const isGeneratedImageUrl = (url?: string): url is string => {
+    return !!url && url.startsWith('data:image/png;base64,');
   };
+  
+  const isUploadedFileUrl = (url?: string): url is string => {
+      return !!url && url.startsWith('data:');
+  }
 
   return (
     <div className={cn('flex items-start space-x-4', isUser && 'justify-end')}>
@@ -148,12 +157,16 @@ export function ChatMessage({ message }: ChatMessageProps) {
             : 'bg-card text-card-foreground shadow-sm'
         )}
       >
-        <div className="prose dark:prose-invert max-w-none">
+        <div className="prose prose-sm dark:prose-invert max-w-none">
           {message.content && parseMessageContent(message.content)}
         </div>
         
-        {isImageUrl(message.image_url) && (
-          <ImageDisplay src={message.image_url} alt={message.content || 'Image'} />
+        {isUser && isUploadedFileUrl(message.image_url) && !isGeneratedImageUrl(message.image_url) && (
+            <ImageDisplay src={message.image_url} alt="Uploaded content" />
+        )}
+        
+        {isAssistant && isGeneratedImageUrl(message.image_url) && (
+          <ImageDisplay src={message.image_url} alt={message.content || 'Generated image'} />
         )}
 
         {message.search_results && message.search_results.length > 0 && (
@@ -201,7 +214,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
               <Copy className="h-4 w-4" />
               <span className="sr-only">Copy message</span>
             </Button>
-            {isImageUrl(message.image_url) && (
+            {isGeneratedImageUrl(message.image_url) && (
               <Button
                 variant="ghost"
                 size="icon"
