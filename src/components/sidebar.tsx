@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Home, MessageSquare, Heart, Info, LogIn, User, LogOut, PlusSquare, History, KeyRound } from 'lucide-react';
+import { Home, MessageSquare, Heart, Info, LogIn, User, LogOut, PlusSquare, History } from 'lucide-react';
 import { ScrollArea } from './ui/scroll-area';
 import { useAuth } from '@/contexts/auth-context';
 import { useToast } from '@/hooks/use-toast';
@@ -70,12 +70,6 @@ export function Sidebar({ onLinkClick }: SidebarProps) {
                     </Button>
                 </Link>
             )}
-             <Link href="/password-generator" passHref>
-                 <Button variant="ghost" className="w-full justify-start" onClick={handleLinkClick}>
-                    <KeyRound className="mr-3 h-5 w-5" />
-                    Password Generator
-                 </Button>
-            </Link>
             <Link href="/feedback" passHref>
                  <Button variant="ghost" className="w-full justify-start" onClick={handleLinkClick}>
                     <MessageSquare className="mr-3 h-5 w-5" />
