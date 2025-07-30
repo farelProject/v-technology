@@ -26,7 +26,7 @@ async function writeChatDatabase(db: ChatDatabase) {
   await fs.writeFile(chatDbPath, JSON.stringify(db, null, 2), 'utf-8');
 }
 
-export function createNewChatSession(userId: string): ChatSession {
+export async function createNewChatSession(userId: string): Promise<ChatSession> {
     return {
         id: new Date().getTime().toString(),
         userId,
