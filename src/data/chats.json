@@ -94,6 +94,26 @@
           "type": "text"
         }
       ]
+    },
+    {
+      "id": "1753883270983",
+      "title": "Tuliskan sebuah puisi tentang alam....",
+      "timestamp": "2025-07-30T13:47:50.983Z",
+      "messages": [
+        {
+          "id": "1753883274106-0.9585633472765456",
+          "role": "user",
+          "content": "Tuliskan sebuah puisi tentang alam.",
+          "isLoading": false
+        },
+        {
+          "id": "1753883274108",
+          "role": "assistant",
+          "content": "Di rimba hijau, mentari bersinar,\nBurung bernyanyi, hati berbinar.\nSungai mengalir, tenang dan damai,\nAlam memanggil, dengan irama gawai.\n\nPohon berdiri, kokoh dan tegar,\nMenjaga bumi, dari bencana besar.\nBunga bermekaran, indah berwarna,\nMenyambut pagi, dengan sukacita.\n\nAngin berhembus, sejuk terasa,\nMembawa aroma, alam yang perkasa.\nGunung menjulang, tinggi membiru,\nMenyimpan misteri, yang tak terpadu.\n\nAlam ini, anugerah Illahi,\nHarus dijaga, sepenuh hati.\nJangan dirusak, atau dicemari,\nAgar lestari, sepanjang hari.",
+          "userId": "assistant",
+          "type": "text"
+        }
+      ]
     }
   ],
   "1753853813182": [

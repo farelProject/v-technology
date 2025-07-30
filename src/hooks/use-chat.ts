@@ -154,21 +154,29 @@ export function useChat(chatId: string | null) {
         const { aiStyle, aiModel } = settings;
         const systemInstruction = `Gaya AI: ${aiStyle}, Model AI: ${aiModel}.`;
         const queryWithInstruction = `${systemInstruction}\n\nPertanyaan: ${input}`;
-        let assistantResponse: Partial<Message> = {};
+        let assistantMessage: Message;
 
         if (mode === 'chat') {
           const result = await chat({ query: queryWithInstruction, file: fileForAi });
-          assistantResponse = { content: result.response, type: 'text' };
+          assistantMessage = {
+            id: loadingMessageId,
+            role: 'assistant',
+            content: result.response,
+            type: 'text',
+            userId: 'assistant',
+          };
         } else if (mode === 'search') {
           const result = await chatWithSearch({ query: queryWithInstruction, file: fileForAi });
-          assistantResponse = {
+          assistantMessage = {
+            id: loadingMessageId,
+            role: 'assistant',
             content: result.response,
             type: 'text',
             search_results: result.searchResults,
+            userId: 'assistant',
           };
         } else if (mode === 'image') {
           const result = await generateImage({ prompt: input });
-          
           const uploadResult = await uploadImageToServer(result.imageUrl, user.id);
           
           let finalImageUrl = result.imageUrl; // fallback to data URI
@@ -182,21 +190,23 @@ export function useChat(chatId: string | null) {
             });
           }
 
-          assistantResponse = {
+          assistantMessage = {
+            id: loadingMessageId,
+            role: 'assistant',
             content: `Here is the image you requested for: "${input}"`,
             type: 'image',
             image_url: finalImageUrl,
+            userId: 'assistant',
           };
         } else {
           throw new Error(`Unknown mode: ${mode}`);
         }
-
-        updateMessage(loadingMessageId, {
-          ...assistantResponse,
-          id: loadingMessageId,
-          role: 'assistant',
-          userId: 'assistant'
-        });
+        
+        setMessages((prev) => 
+            prev.map((msg) =>
+                msg.id === loadingMessageId ? assistantMessage : msg
+            )
+        );
         
         setMessages((currentMessages) => {
           const savedSessionPromise = handleSaveSession(currentMessages, session);
@@ -222,9 +232,6 @@ export function useChat(chatId: string | null) {
 
         updateMessage(loadingMessageId, {
           content: userFriendlyMessage,
-          id: loadingMessageId,
-          role: 'assistant',
-          userId: 'assistant'
         });
         toast({
           title: 'Error',
