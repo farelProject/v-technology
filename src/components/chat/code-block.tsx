@@ -32,7 +32,7 @@ export function CodeBlock({ language, code }: CodeBlockProps) {
   const codeClassName = language ? `language-${language}` : '';
 
   return (
-    <div className="my-2 rounded-md border bg-zinc-950 font-code text-sm">
+    <div className="my-2 rounded-md border bg-zinc-950 font-code text-sm max-w-full">
       <div className="flex items-center justify-between rounded-t-md bg-zinc-800 px-4 py-2 text-white">
         <span className="text-xs text-zinc-400">{language || 'code'}</span>
         <Button variant="ghost" size="icon" className="h-6 w-6 text-zinc-400 hover:bg-zinc-700 hover:text-white" onClick={handleCopy}>

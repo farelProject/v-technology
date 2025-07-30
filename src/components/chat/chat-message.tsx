@@ -180,10 +180,10 @@ export function ChatMessage({ message }: ChatMessageProps) {
       )}
       <div
         className={cn(
-          'max-w-full rounded-lg p-4 space-y-2 w-fit',
+          'rounded-lg p-4 space-y-2',
           isUser
-            ? 'bg-primary text-primary-foreground'
-            : 'bg-card text-card-foreground shadow-sm'
+            ? 'bg-primary text-primary-foreground max-w-[90%]'
+            : 'bg-card text-card-foreground shadow-sm max-w-[90%] w-fit'
         )}
       >
         <div className="space-y-2">
