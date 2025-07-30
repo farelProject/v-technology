@@ -57,9 +57,13 @@ async (input) => {
 const chatWithSearchPrompt = ai.definePrompt({
   name: 'chatWithSearchPrompt',
   input: {schema: ChatWithSearchInputSchema},
-  output: {schema: ChatWithSearchOutputSchema},
+  output: {
+    schema: ChatWithSearchOutputSchema,
+    format: 'json',
+  },
   tools: [webSearch],
-  system: `You are V-technology or Vtech AI, created by Farel Alfareza. Use the webSearch tool if the user asks a question that requires up-to-date information or specific facts. If using the webSearch tool, incorporate the search results into your response, citing the source.  If the question can be answered without external information, you do not need to use the webSearch tool.`,
+  system: `You are V-technology or Vtech AI, created by Farel Alfareza. Use the webSearch tool if the user asks a question that requires up-to-date information or specific facts. If using the webSearch tool, incorporate the search results into your response, citing the source.  If the question can be answered without external information, you do not need to use the webSearch tool.
+Your final output must be a JSON object that conforms to the output schema.`,
   prompt: `{{query}}`,
 });
 
