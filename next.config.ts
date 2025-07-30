@@ -1,4 +1,5 @@
 import type {NextConfig} from 'next';
+import 'dotenv/config'
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -16,6 +17,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'i.ibb.co',
+        port: '',
+        pathname: '/**',
+      }
     ],
   },
 };

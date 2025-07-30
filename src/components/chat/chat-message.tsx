@@ -148,7 +148,8 @@ export function ChatMessage({ message }: ChatMessageProps) {
   };
   
   const isUploadedFileUrl = (url?: string): url is string => {
-      return !!url && url.startsWith('data:');
+      // Any non-data URI is now considered a remote URL from ImgBB
+      return !!url && !url.startsWith('data:');
   }
   
   const messageVariants = {
@@ -178,7 +179,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
           {message.content && parseMessageContent(message.content)}
         </div>
         
-        {isUser && isUploadedFileUrl(message.image_url) && !isGeneratedImageUrl(message.image_url) && (
+        {isUser && message.image_url && (isUploadedFileUrl(message.image_url) || isGeneratedImageUrl(message.image_url)) && (
             <ImageDisplay src={message.image_url} alt="Uploaded content" />
         )}
         

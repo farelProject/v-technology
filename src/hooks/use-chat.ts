@@ -86,21 +86,26 @@ export function useChat(chatId: string | null) {
     if (!input.trim() && !fileDataUri) return;
     if (!session) return;
 
-    // Ensure user message and loading message have unique IDs
     const timestamp = Date.now();
     const userMessageId = `${timestamp}-${Math.random()}`;
     const loadingMessageId = `${timestamp}`;
     
     startTransition(async () => {
+        let finalMessages: Message[] = [...messages];
         try {
             let uploadedImageUrl: string | undefined = undefined;
             if (fileDataUri) {
-                // Upload user-provided image to ImgBB first
                 const uploadResult = await uploadImage(fileDataUri);
                 if (uploadResult.success) {
                     uploadedImageUrl = uploadResult.url;
                 } else {
-                    throw new Error(uploadResult.error || 'Failed to upload image');
+                    toast({
+                      title: 'Image Upload Failed',
+                      description: uploadResult.error || 'Could not upload your image. Please try again.',
+                      variant: 'destructive',
+                    });
+                    // Don't proceed if upload fails
+                    return; 
                 }
             }
 
@@ -108,11 +113,13 @@ export function useChat(chatId: string | null) {
               id: userMessageId,
               role: 'user',
               content: input,
-              image_url: uploadedImageUrl, // Use the new ImgBB URL for user uploads
+              // User uploads should use the ImgBB url. Generated images will use data URI.
+              image_url: uploadedImageUrl,
             };
 
             const updatedMessages = [...messages, userMessage];
             setMessages(updatedMessages);
+            finalMessages = updatedMessages; // Keep track of messages to save later
 
             // Add loading indicator
             setMessages(prev => [...prev, { id: loadingMessageId, role: 'assistant', content: '...' }]);
@@ -152,9 +159,7 @@ export function useChat(chatId: string | null) {
                 throw new Error(`Unknown mode: ${mode}`);
             }
 
-            // Replace loading message with the final assistant message
-            const finalMessages = [...updatedMessages, assistantMessage];
-
+            finalMessages = [...updatedMessages, assistantMessage];
             const savedSession = await handleSaveSession(finalMessages, session);
 
             if (savedSession) {
@@ -174,8 +179,7 @@ export function useChat(chatId: string | null) {
               description: error.message || 'Failed to get response from AI. Please try again.',
               variant: 'destructive',
             });
-            // Remove the loading message if an error occurs
-            setMessages((prev) => prev.filter((m) => m.id !== loadingMessageId));
+            setMessages(finalMessages); // Revert to messages before the error
         }
     });
   };
