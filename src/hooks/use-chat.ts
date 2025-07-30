@@ -29,7 +29,11 @@ export function useChat(chatId: string | null) {
 
   // Load chat session
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+        setMessages([]); // Clear messages if user logs out
+        setSession(null);
+        return;
+    };
     
     const loadSession = async () => {
         if (chatId) {
@@ -118,7 +122,7 @@ export function useChat(chatId: string | null) {
             if (mode === 'chat') {
                const result = await chat({ query: queryWithInstruction, file: fileDataUri });
                assistantMessage = {
-                 id: loadingMessage.id,
+                 id: loadingMessageId,
                  role: 'assistant',
                  content: result.response,
                  type: 'text',
@@ -126,7 +130,7 @@ export function useChat(chatId: string | null) {
             } else if (mode === 'search') {
               const result = await chatWithSearch({ query: queryWithInstruction, file: fileDataUri });
               assistantMessage = {
-                id: loadingMessage.id,
+                id: loadingMessageId,
                 role: 'assistant',
                 content: result.response,
                 type: 'text',
@@ -141,7 +145,7 @@ export function useChat(chatId: string | null) {
               }
 
               assistantMessage = {
-                id: loadingMessage.id,
+                id: loadingMessageId,
                 role: 'assistant',
                 content: `Here is the image you requested for: "${input}"`,
                 type: 'image',
@@ -151,6 +155,7 @@ export function useChat(chatId: string | null) {
                 throw new Error(`Unknown mode: ${mode}`);
             }
 
+            // Replace loading message with the final assistant message
             const finalMessages = [...updatedMessages, assistantMessage];
 
             const savedSession = await handleSaveSession(finalMessages, session);
