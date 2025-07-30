@@ -67,10 +67,6 @@ async (input) => {
 const chatWithSearchPrompt = ai.definePrompt({
   name: 'chatWithSearchPrompt',
   input: {schema: ChatWithSearchInputSchema},
-  output: {
-    schema: ChatWithSearchOutputSchema,
-    format: 'json',
-  },
   tools: [webSearch],
   system: `You are V-technology or Vtech AI, created by Farel Alfareza.
 - You are a helpful assistant that provides informative and accurate responses.
@@ -81,6 +77,9 @@ const chatWithSearchPrompt = ai.definePrompt({
 - Your final output MUST BE a valid JSON object that strictly conforms to the output schema.
 - The JSON object must have a 'response' property containing your answer.
 - Do not output anything other than the JSON object itself. For example, do not include markdown formatting like \`\`\`json\`\`\`.`,
+  output: {
+    format: 'json'
+  },
   prompt: `{{query}}`,
 });
 
@@ -88,14 +87,30 @@ const chatWithSearchFlow = ai.defineFlow(
   {
     name: 'chatWithSearchFlow',
     inputSchema: ChatWithSearchInputSchema,
-    outputSchema: ChatWithSearchOutputSchema,
+    outputSchema: z.any(),
   },
-  async input => {
+  async (input) => {
     const llmResponse = await chatWithSearchPrompt(input);
     const toolCalls = llmResponse.toolCalls;
 
+    let parsedResponse: ChatWithSearchOutput;
+    try {
+      const outputText = llmResponse.text;
+      const jsonResponse = JSON.parse(outputText);
+      const validation = ChatWithSearchOutputSchema.safeParse(jsonResponse);
+      if (validation.success) {
+        parsedResponse = validation.data;
+      } else {
+        parsedResponse = { response: outputText };
+      }
+    } catch (e) {
+      // Not a JSON response, just use the text.
+      parsedResponse = { response: llmResponse.text ?? "I'm sorry, I couldn't generate a response." };
+    }
+
+
     const assistantMessage = {
-      response: llmResponse.output?.response ?? "I'm sorry, I couldn't generate a response.",
+      response: parsedResponse.response,
       toolCalls: [] as any,
     };
 
@@ -105,12 +120,12 @@ const chatWithSearchFlow = ai.defineFlow(
       assistantMessage.toolCalls.push({
         tool: {
           webSearch: {
-            output: toolOutput
-          }
-        }
-      })
+            output: toolOutput,
+          },
+        },
+      });
     }
 
-    return assistantMessage as any;
+    return assistantMessage;
   }
 );
