@@ -40,6 +40,14 @@ const modeConfig = {
     }
 }
 
+const SUPPORTED_MIME_TYPES = [
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+    'application/pdf',
+    'text/plain',
+];
+
 export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
   const [input, setInput] = useState('');
   const [mode, setMode] = useState<AiMode>('chat');
@@ -85,6 +93,16 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+        if (!SUPPORTED_MIME_TYPES.includes(file.type)) {
+            toast({
+                title: 'Unsupported File Type',
+                description: `The selected file type (${file.type}) is not supported. Please select a different file.`,
+                variant: 'destructive',
+            });
+            clearFile();
+            return;
+        }
+
       setSelectedFile(file);
       const reader = new FileReader();
       reader.onload = (loadEvent) => {
@@ -207,7 +225,7 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
+          <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept={SUPPORTED_MIME_TYPES.join(',')} />
           <Button type="button" variant="ghost" size="icon" onClick={handleUploadClick} disabled={isLoading}>
             <Paperclip className="h-5 w-5" />
           </Button>
