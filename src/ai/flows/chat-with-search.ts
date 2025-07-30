@@ -83,7 +83,6 @@ const chatWithSearchPrompt = ai.definePrompt({
 - The JSON object must have a 'response' property containing your answer.
 - Do not output anything other than the JSON object itself. For example, do not include markdown formatting like \`\`\`json\`\`\`.`,
   output: {
-    format: 'json',
     schema: ChatWithSearchOutputSchema,
   },
   prompt: `{{query}}`,
