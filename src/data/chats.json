@@ -1,1 +1,41 @@
-{}
+{
+  "1753888737578": [
+    {
+      "id": "1753889325344",
+      "userId": "1753888737578",
+      "title": "Hi...",
+      "timestamp": "2025-07-30T15:28:45.344Z",
+      "messages": [
+        {
+          "id": "1753889329249-0.5105241815637945",
+          "role": "user",
+          "content": "Hi",
+          "userId": "1753888737578",
+          "isLoading": false
+        },
+        {
+          "id": "1753889329251",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Hi there! How can I help you today?",
+          "type": "text"
+        },
+        {
+          "id": "1753889359450-0.5509826251682304",
+          "role": "user",
+          "content": "Cat cry",
+          "userId": "1753888737578",
+          "isLoading": false
+        },
+        {
+          "id": "1753889359451",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Here is the image you requested for: \"Cat cry\"",
+          "type": "image",
+          "image_url": "/uploads/a70bfcaf-59da-4a3f-96bd-a28861ef91fb.png"
+        }
+      ]
+    }
+  ]
+}
