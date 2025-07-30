@@ -160,16 +160,9 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
   return wrapper(
     <div className={cn('flex items-start space-x-4', isUser && 'justify-end')}>
-      {isAssistant && (
-        <Avatar className="h-8 w-8">
-          <div className="flex h-full w-full items-center justify-center rounded-full bg-primary/20 text-primary">
-            <VTechIcon className="h-5 w-5" />
-          </div>
-        </Avatar>
-      )}
       <div
         className={cn(
-          'max-w-full md:max-w-xl lg:max-w-2xl xl:max-w-3xl rounded-lg p-4 space-y-2',
+          'max-w-full rounded-lg p-4 space-y-2 w-full',
           isUser
             ? 'bg-primary text-primary-foreground'
             : 'bg-card text-card-foreground shadow-sm'
