@@ -16,14 +16,14 @@ import {
   createNewChatSession,
 } from '@/lib/chat-service';
 
-async function uploadImageToServer(base64Image: string): Promise<{ success: boolean; url?: string; error?: string }> {
+async function uploadImageToServer(base64Image: string, userId: string): Promise<{ success: boolean; url?: string; error?: string }> {
   try {
     const response = await fetch('/api/upload', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ image: base64Image }),
+      body: JSON.stringify({ image: base64Image, userId }),
     });
 
     const result = await response.json();
@@ -114,24 +114,27 @@ export function useChat(chatId: string | null) {
     if (!session) return;
 
     const userMessageId = `${Date.now()}-${Math.random()}`;
+    const userMessage: Message = {
+      id: userMessageId,
+      role: 'user',
+      content: input,
+      isLoading: !!fileDataUri,
+      userId: user.id
+    };
+    
+    // Immediately add user message to the UI
+    setMessages((prev) => [...prev, userMessage]);
 
+    // Process the rest in the background
     startTransition(async () => {
-      const userMessage: Message = {
-        id: userMessageId,
-        role: 'user',
-        content: input,
-        isLoading: !!fileDataUri,
-      };
-      setMessages((prev) => [...prev, userMessage]);
-
       let uploadedImageUrl: string | undefined = undefined;
       let fileForAi: string | undefined = undefined;
 
       if (fileDataUri) {
-        const uploadResult = await uploadImageToServer(fileDataUri);
+        const uploadResult = await uploadImageToServer(fileDataUri, user.id);
         if (uploadResult.success && uploadResult.url) {
           uploadedImageUrl = uploadResult.url;
-          fileForAi = uploadResult.url; 
+          fileForAi = uploadResult.url;
           updateMessage(userMessageId, {
             isLoading: false,
             image_url: uploadedImageUrl,
@@ -169,7 +172,7 @@ export function useChat(chatId: string | null) {
         } else if (mode === 'image') {
           const result = await generateImage({ prompt: input });
           
-          const uploadResult = await uploadImageToServer(result.imageUrl);
+          const uploadResult = await uploadImageToServer(result.imageUrl, user.id);
           
           let finalImageUrl = result.imageUrl; // fallback to data URI
           if (uploadResult.success && uploadResult.url) {

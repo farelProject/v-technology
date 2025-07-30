@@ -37,6 +37,25 @@
           "type": "text"
         }
       ]
+    },
+    {
+      "id": "1753882647752",
+      "title": "Hslo...",
+      "timestamp": "2025-07-30T13:37:27.752Z",
+      "messages": [
+        {
+          "id": "1753882650497-0.3203446013482605",
+          "role": "user",
+          "content": "Hslo",
+          "isLoading": false
+        },
+        {
+          "id": "1753882650499",
+          "role": "assistant",
+          "content": "Halo! Ada yang bisa saya bantu? Saya seorang programmer AI yang ceria, siap membantu Anda dengan pertanyaan atau tugas pemrograman!",
+          "type": "text"
+        }
+      ]
     }
   ],
   "1753853813182": [
