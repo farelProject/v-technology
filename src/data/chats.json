@@ -56,6 +56,25 @@
           "type": "text"
         }
       ]
+    },
+    {
+      "id": "1753882805117",
+      "title": "Halo...",
+      "timestamp": "2025-07-30T13:40:05.117Z",
+      "messages": [
+        {
+          "id": "1753882808159-0.768065225003532",
+          "role": "user",
+          "content": "Halo",
+          "isLoading": false
+        },
+        {
+          "id": "1753882808160",
+          "role": "assistant",
+          "content": "Halo! Ada yang bisa saya bantu hari ini?",
+          "type": "text"
+        }
+      ]
     }
   ],
   "1753853813182": [

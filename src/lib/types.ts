@@ -6,6 +6,7 @@ export interface Message {
   image_url?: string;
   search_results?: { title: string; description: string; link: string }[];
   isLoading?: boolean;
+  userId: string;
 }
 
 export type AiMode = 'chat' | 'image' | 'search';
