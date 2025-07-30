@@ -16,7 +16,7 @@ const SearchResultItemSchema = z.object({
 });
 
 const ChatWithSearchOutputSchema = z.object({
-  response: z.string().describe('A brief, one-sentence introductory response from the AI.'),
+  response: z.string().describe('A brief, one-sentence introductory response from the AI. This can include markdown, including code blocks.'),
   searchResults: z.array(SearchResultItemSchema).optional(),
 });
 export type ChatWithSearchOutput = z.infer<typeof ChatWithSearchOutputSchema>;
@@ -56,11 +56,12 @@ const chatWithSearchPrompt = ai.definePrompt({
   tools: [webSearch],
   system: `You are V-technology or Vtech AI, created by Farel Alfareza.
 - You are a helpful assistant.
+- You can generate code snippets when asked. Use markdown for code blocks.
 - You MUST use the webSearch tool to answer the user's query if it requires recent information or searching the web.
 - If the user provides a file, you should analyze it.
 - After getting the search results, you MUST generate a new, insightful description for EACH of the 5 search results.
 - Your final output MUST BE a valid JSON object that strictly conforms to the output schema.
-- The 'response' field should be a single, short introductory sentence like "Here are the search results for your query." or an answer based on the context.
+- The 'response' field should be a single, short introductory sentence like "Here are the search results for your query." or an answer based on the context. The response can contain markdown, including code blocks.
 - The 'searchResults' field must contain an array of 5 objects, each with a title, the AI-generated description, and a link.
 - Do not output anything other than the JSON object itself.`,
   prompt: `{{#if file}}{{media url=file}}{{/if}}
