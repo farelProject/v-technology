@@ -33,7 +33,8 @@ export function MessageList({
     onSend('chat', question);
   };
 
-  const showSuggestions = messages && messages.length === 0 && !isLoading && isNewChat && user;
+  // Show suggestions if messages are loaded, the list is empty, user is logged in, and not loading.
+  const showSuggestions = messages && messages.length === 0 && !isLoading && user;
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8">
