@@ -1,7 +1,7 @@
 
 'use client';
 
-import { Bot, User, Download, Copy, ExternalLink, Eye } from 'lucide-react';
+import { Bot, User, Download, Copy, ExternalLink, Eye, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -179,6 +179,13 @@ export function ChatMessage({ message }: ChatMessageProps) {
           {message.content && parseMessageContent(message.content)}
         </div>
         
+        {isUser && message.isLoading && (
+            <div className="flex items-center space-x-2 text-primary-foreground/80">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Mengunggah gambar...</span>
+            </div>
+        )}
+
         {isUser && message.image_url && (isUploadedFileUrl(message.image_url) || isGeneratedImageUrl(message.image_url)) && (
             <ImageDisplay src={message.image_url} alt="Uploaded content" />
         )}

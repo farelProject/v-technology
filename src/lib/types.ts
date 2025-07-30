@@ -5,6 +5,7 @@ export interface Message {
   type?: 'text' | 'image';
   image_url?: string;
   search_results?: { title: string; description: string; link: string }[];
+  isLoading?: boolean;
 }
 
 export type AiMode = 'chat' | 'image' | 'search';

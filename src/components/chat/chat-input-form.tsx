@@ -38,12 +38,10 @@ const modeConfig = {
     }
 }
 
-const SUPPORTED_MIME_TYPES = [
+const SUPPORTED_IMAGE_MIME_TYPES = [
     'image/jpeg',
     'image/png',
     'image/webp',
-    'application/pdf',
-    'text/plain',
 ];
 
 export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
@@ -103,10 +101,10 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
     if (!handleAuthGuard('upload file')) return;
     const file = event.target.files?.[0];
     if (file) {
-        if (!SUPPORTED_MIME_TYPES.includes(file.type)) {
+        if (!SUPPORTED_IMAGE_MIME_TYPES.includes(file.type)) {
             toast({
-                title: 'Unsupported File Type',
-                description: `The selected file type (${file.type}) is not supported. Please select a different file.`,
+                title: 'Jenis File Tidak Didukung',
+                description: `Hanya file gambar (JPEG, PNG, WebP) yang didukung.`,
                 variant: 'destructive',
             });
             clearFile();
@@ -222,7 +220,7 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept={SUPPORTED_MIME_TYPES.join(',')} />
+          <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept={SUPPORTED_IMAGE_MIME_TYPES.join(',')} />
           <Button type="button" variant="ghost" size="icon" onClick={handleUploadClick} disabled={isLoading}>
             <Paperclip className="h-5 w-5" />
           </Button>

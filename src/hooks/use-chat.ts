@@ -77,6 +77,14 @@ export function useChat(chatId: string | null) {
 
   }, [user]);
 
+  const updateMessage = (messageId: string, updates: Partial<Message>) => {
+    setMessages(prev =>
+      prev.map(msg =>
+        msg.id === messageId ? { ...msg, ...updates } : msg
+      )
+    );
+  };
+
 
   const handleSend = (mode: AiMode, input: string, fileDataUri?: string) => {
     if (!user) {
@@ -86,101 +94,120 @@ export function useChat(chatId: string | null) {
     if (!input.trim() && !fileDataUri) return;
     if (!session) return;
 
-    const timestamp = Date.now();
-    const userMessageId = `${timestamp}-${Math.random()}`;
-    const loadingMessageId = `${timestamp}`;
+    const userMessageId = `${Date.now()}-${Math.random()}`;
     
     startTransition(async () => {
-        let finalMessages: Message[] = [...messages];
-        try {
-            let uploadedImageUrl: string | undefined = undefined;
-            if (fileDataUri) {
-                const uploadResult = await uploadImage(fileDataUri);
-                if (uploadResult.success) {
-                    uploadedImageUrl = uploadResult.url;
-                } else {
-                    toast({
-                      title: 'Image Upload Failed',
-                      description: uploadResult.error || 'Could not upload your image. Please try again.',
-                      variant: 'destructive',
-                    });
-                    // Don't proceed if upload fails
-                    return; 
-                }
-            }
+      // Optimistically add user message
+      const userMessage: Message = {
+        id: userMessageId,
+        role: 'user',
+        content: input,
+        isLoading: !!fileDataUri, // Set loading if there's a file
+      };
+      setMessages(prev => [...prev, userMessage]);
 
-            const userMessage: Message = {
-              id: userMessageId,
-              role: 'user',
-              content: input,
-              // User uploads should use the ImgBB url. Generated images will use data URI.
-              image_url: uploadedImageUrl,
-            };
+      let uploadedImageUrl: string | undefined = undefined;
+      let fileForAi: string | undefined = fileDataUri;
 
-            const updatedMessages = [...messages, userMessage];
-            setMessages(updatedMessages);
-            finalMessages = updatedMessages; // Keep track of messages to save later
-
-            // Add loading indicator
-            setMessages(prev => [...prev, { id: loadingMessageId, role: 'assistant', content: '...' }]);
-            
-            const { aiStyle, aiModel } = settings;
-            const systemInstruction = `Gaya AI: ${aiStyle}, Model AI: ${aiModel}.`;
-            const queryWithInstruction = `${systemInstruction}\n\nPertanyaan: ${input}`;
-            let assistantMessage: Message;
-    
-            if (mode === 'chat') {
-               const result = await chat({ query: queryWithInstruction, file: fileDataUri });
-               assistantMessage = {
-                 id: loadingMessageId,
-                 role: 'assistant',
-                 content: result.response,
-                 type: 'text',
-               };
-            } else if (mode === 'search') {
-              const result = await chatWithSearch({ query: queryWithInstruction, file: fileDataUri });
-              assistantMessage = {
-                id: loadingMessageId,
-                role: 'assistant',
-                content: result.response,
-                type: 'text',
-                search_results: result.searchResults
-              };
-            } else if (mode === 'image') {
-              const result = await generateImage({ prompt: input });
-              assistantMessage = {
-                id: loadingMessageId,
-                role: 'assistant',
-                content: `Here is the image you requested for: "${input}"`,
-                type: 'image',
-                image_url: result.imageUrl, // Use the direct data URI from the AI
-              };
-            } else {
-                throw new Error(`Unknown mode: ${mode}`);
-            }
-
-            finalMessages = [...updatedMessages, assistantMessage];
-            const savedSession = await handleSaveSession(finalMessages, session);
-
-            if (savedSession) {
-                setSession(savedSession);
-                setMessages(savedSession.messages);
-            }
-
-            // If this was a new chat, redirect to the new chat's URL
-            if (!chatId) {
-                router.replace(`/?id=${session.id}`, { scroll: false });
-            }
-
-        } catch (error: any) {
-            console.error(error);
-            toast({
-              title: 'Error',
-              description: error.message || 'Failed to get response from AI. Please try again.',
-              variant: 'destructive',
-            });
-            setMessages(finalMessages); // Revert to messages before the error
+      if (fileDataUri) {
+        const uploadResult = await uploadImage(fileDataUri);
+        if (uploadResult.success && uploadResult.url) {
+          uploadedImageUrl = uploadResult.url;
+          // Use the hosted URL for the AI, not the base64 data URI
+          fileForAi = uploadResult.url;
+          // Update the user message to show the uploaded image
+          updateMessage(userMessageId, {
+            isLoading: false,
+            image_url: uploadedImageUrl,
+          });
+        } else {
+          toast({
+            title: 'Image Upload Failed',
+            description: uploadResult.error || 'Could not upload your image. Please try again.',
+            variant: 'destructive',
+          });
+          // Remove the optimistic message on failure
+          setMessages(prev => prev.filter(msg => msg.id !== userMessageId));
+          return;
         }
+      }
+        
+      const loadingMessageId = `${Date.now()}`;
+      // Add loading indicator for AI response
+      setMessages(prev => [...prev, { id: loadingMessageId, role: 'assistant', content: '...' }]);
+        
+      try {
+          const { aiStyle, aiModel } = settings;
+          const systemInstruction = `Gaya AI: ${aiStyle}, Model AI: ${aiModel}.`;
+          const queryWithInstruction = `${systemInstruction}\n\nPertanyaan: ${input}`;
+          let assistantResponse: Message;
+  
+          if (mode === 'chat') {
+             const result = await chat({ query: queryWithInstruction, file: fileForAi });
+             assistantResponse = {
+               content: result.response,
+               type: 'text',
+             };
+          } else if (mode === 'search') {
+            const result = await chatWithSearch({ query: queryWithInstruction, file: fileForAi });
+            assistantResponse = {
+              content: result.response,
+              type: 'text',
+              search_results: result.searchResults
+            };
+          } else if (mode === 'image') {
+            const result = await generateImage({ prompt: input });
+            assistantResponse = {
+              content: `Here is the image you requested for: "${input}"`,
+              type: 'image',
+              image_url: result.imageUrl, // Use the direct data URI from the AI
+            };
+          } else {
+              throw new Error(`Unknown mode: ${mode}`);
+          }
+
+          // Update the loading message with the actual response
+          updateMessage(loadingMessageId, {
+            ...assistantResponse,
+            id: loadingMessageId, // Ensure ID remains the same
+            role: 'assistant',
+          });
+
+          // Save the complete session
+          const finalMessages = messages.map(msg => {
+            if (msg.id === userMessageId) {
+                return { ...userMessage, image_url: uploadedImageUrl, isLoading: false };
+            }
+            if(msg.id === loadingMessageId) {
+                 return { ...msg, ...assistantResponse, id: loadingMessageId, role: 'assistant' };
+            }
+            return msg;
+          });
+          
+          // Get the latest state of messages before saving
+          setMessages(currentMessages => {
+            const savedSessionPromise = handleSaveSession(currentMessages, session);
+            savedSessionPromise.then(savedSession => {
+                if (savedSession) {
+                    setSession(savedSession);
+                    if (!chatId) {
+                        router.replace(`/?id=${savedSession.id}`, { scroll: false });
+                    }
+                }
+            })
+            return currentMessages;
+          });
+
+
+      } catch (error: any) {
+          console.error(error);
+          updateMessage(loadingMessageId, { content: 'Gagal mendapatkan respons dari AI. Silakan coba lagi.', id: loadingMessageId, role: 'assistant' });
+          toast({
+            title: 'Error',
+            description: error.message || 'Failed to get response from AI. Please try again.',
+            variant: 'destructive',
+          });
+      }
     });
   };
 
