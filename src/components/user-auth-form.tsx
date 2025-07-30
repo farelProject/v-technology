@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   type: 'login' | 'register';
@@ -16,6 +17,8 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
   const { toast } = useToast();
   const router = useRouter();
 
@@ -23,15 +26,48 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
     event.preventDefault();
     setIsLoading(true);
 
-    // Placeholder for auth logic
-    setTimeout(() => {
-      setIsLoading(false);
-      toast({
-        title: type === 'login' ? 'Login Successful' : 'Registration Successful',
-        description: 'Redirecting you to the main app...',
+    if (type === 'login') {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
-      router.push('/');
-    }, 1500);
+
+      if (error) {
+        toast({
+          title: 'Login Failed',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Login Successful',
+          description: 'Redirecting you to the main app...',
+        });
+        router.push('/');
+        router.refresh(); // To reflect logged-in state
+      }
+    } else {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast({
+          title: 'Registration Failed',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Registration Successful',
+          description: 'Please check your email to verify your account.',
+        });
+        router.push('/');
+      }
+    }
+
+    setIsLoading(false);
   }
 
   return (
@@ -49,6 +85,8 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
               autoCorrect="off"
               disabled={isLoading}
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="grid gap-2">
@@ -59,6 +97,8 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
               disabled={isLoading}
               required
               minLength={6}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <Button disabled={isLoading}>
