@@ -43,7 +43,7 @@ function ChatLimitDisplay({ initialLimit }: { initialLimit: ChatLimit | null }) 
     useEffect(() => {
         const fetchLimit = async () => {
             if (user?.id) {
-                const latestLimit = await getAndUpdateChatLimit(user.id);
+                const latestLimit = await getAndUpdateChatLimit(user.id, false); // Fetch without incrementing
                 setLimitInfo(latestLimit);
             }
         };
@@ -55,15 +55,16 @@ function ChatLimitDisplay({ initialLimit }: { initialLimit: ChatLimit | null }) 
     }
 
     const { count, limit, lastReset } = limitInfo;
-    const percentage = (count / limit) * 100;
+    const remaining = Math.max(0, limit - count);
+    const percentage = (remaining / limit) * 100;
     const nextResetDate = new Date(new Date(lastReset).getTime() + 24 * 60 * 60 * 1000);
 
     return (
         <div className="space-y-2">
             <div className="flex justify-between items-baseline">
-                <Label>Daily Chat Limit</Label>
+                <Label>Daily Chats Remaining</Label>
                 <p className="text-sm font-medium text-muted-foreground">
-                    {count} / {limit} Used
+                    {remaining} / {limit} Remaining
                 </p>
             </div>
             <Progress value={percentage} className="w-full" />

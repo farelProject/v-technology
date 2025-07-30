@@ -185,10 +185,11 @@ export function useChat(chatId: string | null) {
         }
 
         // Show warning if limit is low
-        if (newLimit.limit > 0 && newLimit.limit - newLimit.count <= 2 && newLimit.limit - newLimit.count > 0) {
+        const remainingChats = newLimit.limit - newLimit.count;
+        if (newLimit.limit > 0 && remainingChats <= 2 && remainingChats > 0) {
             toast({
                 title: 'Limit Warning',
-                description: `You have ${newLimit.limit - newLimit.count} messages left.`
+                description: `You have ${remainingChats} messages left.`
             });
         }
 

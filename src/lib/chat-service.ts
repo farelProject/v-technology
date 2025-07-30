@@ -107,7 +107,7 @@ export async function deleteChatSession(userId: string, sessionId: string) {
 }
 
 // Chat Limit Functions
-export async function getAndUpdateChatLimit(userId: string): Promise<ChatLimit | null> {
+export async function getAndUpdateChatLimit(userId: string, increment: boolean = true): Promise<ChatLimit | null> {
     const users = await readUsers();
     const userIndex = users.findIndex(u => u.id === userId);
 
@@ -123,10 +123,12 @@ export async function getAndUpdateChatLimit(userId: string): Promise<ChatLimit |
     const isNewDay = now.toDateString() !== lastResetDate.toDateString();
 
     if (isNewDay) {
-        user.chatLimit.count = 1; // Reset to 1 as this is the first chat of the new day
+        user.chatLimit.count = increment ? 1 : 0; // Reset to 1 as this is the first chat of the new day
         user.chatLimit.lastReset = now.toISOString();
     } else {
-        user.chatLimit.count += 1;
+        if(increment) {
+            user.chatLimit.count += 1;
+        }
     }
 
     await writeUsers(users);
