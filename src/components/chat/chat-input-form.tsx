@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Mic, Image as ImageIcon, MessageSquare, StopCircle } from 'lucide-react';
+import { Send, Mic, Image as ImageIcon, MessageSquare, StopCircle, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -18,6 +18,24 @@ import { Label } from '../ui/label';
 interface ChatInputFormProps {
   onSend: (mode: AiMode, message: string) => void;
   isLoading: boolean;
+}
+
+const modeConfig = {
+    chat: {
+        icon: MessageSquare,
+        placeholder: 'Tanya VTech AI...',
+        label: 'Chat',
+    },
+    image: {
+        icon: ImageIcon,
+        placeholder: 'Buat gambar dengan VTech AI...',
+        label: 'Generate Image',
+    },
+    search: {
+        icon: Search,
+        placeholder: 'Cari di web dengan VTech AI...',
+        label: 'Search',
+    }
 }
 
 export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
@@ -71,6 +89,8 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
       handleSubmit(e as any);
     }
   };
+  
+  const CurrentModeIcon = modeConfig[mode].icon;
 
   return (
     <form onSubmit={handleSubmit} className="rounded-lg border bg-card p-2 shadow-sm">
@@ -100,7 +120,7 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
         </div>
       <div className="relative flex items-center">
         <Textarea
-          placeholder={`Tanya ${mode === 'chat' ? 'VTech AI' : 'untuk membuat gambar'}...`}
+          placeholder={modeConfig[mode].placeholder}
           className="min-h-12 w-full resize-none border-0 p-3 pr-28 shadow-none focus-visible:ring-0"
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -110,17 +130,21 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" disabled={isLoading}>
-                {mode === 'chat' ? <MessageSquare className="h-5 w-5" /> : <ImageIcon className="h-5 w-5" />}
+                <CurrentModeIcon className="h-5 w-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem onClick={() => setMode('chat')}>
                 <MessageSquare className="mr-2 h-4 w-4" />
-                Chat
+                <span>Chat</span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setMode('image')}>
                 <ImageIcon className="mr-2 h-4 w-4" />
-                Generate Image
+                <span>Generate Image</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setMode('search')}>
+                <Search className="mr-2 h-4 w-4" />
+                <span>Search</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

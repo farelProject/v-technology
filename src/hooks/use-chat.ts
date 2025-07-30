@@ -32,9 +32,12 @@ export function useChat() {
 
     startTransition(async () => {
       try {
-        if (mode === 'chat') {
+        if (mode === 'chat' || mode === 'search') {
           const { aiStyle, aiModel } = settings;
-          const systemInstruction = `Gaya AI: ${aiStyle}, Model AI: ${aiModel}.`;
+          let systemInstruction = `Gaya AI: ${aiStyle}, Model AI: ${aiModel}.`;
+          if (mode === 'search') {
+            systemInstruction += ' Selalu gunakan webSearch tool.';
+          }
           const queryWithInstruction = `${systemInstruction}\n\nPertanyaan: ${input}`;
           
           const result = await chatWithSearch({ query: queryWithInstruction });

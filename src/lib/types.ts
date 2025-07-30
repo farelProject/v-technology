@@ -7,7 +7,7 @@ export interface Message {
   search_results?: { title: string; description: string; link: string }[];
 }
 
-export type AiMode = 'chat' | 'image';
+export type AiMode = 'chat' | 'image' | 'search';
 export type AiStyle = 'Ceria' | 'Gaul' | 'Professional';
 export type AiModel = 'Asisten' | 'Programmer' | 'Dokter';
 
