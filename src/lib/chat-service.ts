@@ -117,11 +117,13 @@ export async function getAndUpdateChatLimit(userId: string): Promise<ChatLimit |
     
     const user = users[userIndex];
     const now = new Date();
-    const lastReset = new Date(user.chatLimit.lastReset);
+    const lastResetDate = new Date(user.chatLimit.lastReset);
 
-    // Check if 24 hours have passed
-    if (now.getTime() - lastReset.getTime() > 24 * 60 * 60 * 1000) {
-        user.chatLimit.count = 1; // Reset to 1 as this is the first chat of the new period
+    // Reset limit if it's a new day (based on calendar date, not 24 hours)
+    const isNewDay = now.toDateString() !== lastResetDate.toDateString();
+
+    if (isNewDay) {
+        user.chatLimit.count = 1; // Reset to 1 as this is the first chat of the new day
         user.chatLimit.lastReset = now.toISOString();
     } else {
         user.chatLimit.count += 1;

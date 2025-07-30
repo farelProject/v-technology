@@ -29,10 +29,10 @@ function getInitialGuestLimit(): ChatLimit {
         const storedLimit = localStorage.getItem('vtech-guest-limit');
         if (storedLimit) {
             const parsed = JSON.parse(storedLimit) as ChatLimit;
-            // Check if it needs reset
-            const lastReset = new Date(parsed.lastReset);
+            // Check if it needs reset (new day)
+            const lastResetDate = new Date(parsed.lastReset);
             const now = new Date();
-            if (now.getTime() - lastReset.getTime() > 24 * 60 * 60 * 1000) {
+            if (now.toDateString() !== lastResetDate.toDateString()) {
                 return { count: 0, limit: GUEST_LIMIT, lastReset: now.toISOString() };
             }
             return parsed;
