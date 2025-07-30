@@ -62,3 +62,18 @@ export async function loginUser({ email, password }: any) {
 
   return { success: true, user: { name: user.name, email: user.email } };
 }
+
+export async function deleteUser(email: string) {
+  let users = await readUsers();
+  const userIndex = users.findIndex((user) => user.email === email);
+
+  if (userIndex === -1) {
+    return { success: false, message: 'User not found.' };
+  }
+
+  // In a real system, you would also delete all associated data like chat history.
+  users.splice(userIndex, 1);
+  await writeUsers(users);
+
+  return { success: true, message: 'User deleted successfully.' };
+}
