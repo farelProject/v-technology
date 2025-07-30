@@ -1,46 +1,6 @@
 {
   "undefined": [
     {
-      "id": "1753883693425",
-      "title": "Apa itu kecerdasan buatan?...",
-      "timestamp": "2025-07-30T13:54:53.425Z",
-      "messages": [
-        {
-          "id": "1753883694954-0.24412191833603236",
-          "role": "user",
-          "content": "Apa itu kecerdasan buatan?",
-          "isLoading": false
-        },
-        {
-          "id": "1753883694955",
-          "role": "assistant",
-          "content": "Kecerdasan buatan (AI) itu seperti memberikan otak manusia ke komputer! Komputer jadi bisa belajar, berpikir, dan menyelesaikan masalah seperti manusia. Contohnya, AI bisa bantu kamu mencari informasi di internet, mengenali wajah temanmu di foto, atau bahkan bermain game catur. Seru kan?",
-          "type": "text",
-          "userId": "assistant"
-        }
-      ]
-    },
-    {
-      "id": "1753883819778",
-      "title": "Halo...",
-      "timestamp": "2025-07-30T13:56:59.779Z",
-      "messages": [
-        {
-          "id": "1753883823660-0.36314621975796546",
-          "role": "user",
-          "content": "Halo",
-          "isLoading": false
-        },
-        {
-          "id": "1753883823661",
-          "role": "assistant",
-          "userId": "assistant",
-          "content": "Halo! Selamat datang! Ada yang bisa saya bantu hari ini?",
-          "type": "text"
-        }
-      ]
-    },
-    {
       "id": "1753883939510",
       "title": "Apa itu kecerdasan buatan?...",
       "timestamp": "2025-07-30T13:58:59.510Z",
@@ -220,6 +180,19 @@
               "link": "https://www.makeuseof.com/fix-the-following-signatures-couldnt-be-verified-because-the-public-key-is-not-available-error/"
             }
           ]
+        },
+        {
+          "id": "1753884453319-0.28221991621511844",
+          "role": "user",
+          "content": "Buset",
+          "isLoading": false
+        },
+        {
+          "id": "1753884453321",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Waduh, ada apa nih? Semangat terus ya! Kalau ada yang bisa kubantu, bilang aja!",
+          "type": "text"
         }
       ]
     }

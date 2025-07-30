@@ -29,19 +29,19 @@ export default function ForgotPasswordPage() {
         const resetUrl = `${window.location.origin}/reset-password/${result.token}`;
         console.log('Password Reset URL:', resetUrl);
         toast({
-            title: 'Tautan Reset Terkirim (Simulasi)',
-            description: `Kami telah membuat tautan reset untuk Anda. Klik untuk melanjutkan: ${resetUrl}`,
+            title: 'Reset Link Sent (Simulation)',
+            description: `We've generated a reset link for you. Click to proceed: ${resetUrl}`,
             duration: 15000, // Keep toast longer
         });
          toast({
-            title: 'Permintaan Reset Berhasil',
-            description: 'Jika ada akun dengan email tersebut, kami telah mengirimkan instruksi reset.',
+            title: 'Reset Request Successful',
+            description: 'If an account exists with that email, we have sent reset instructions.',
         });
     } else {
         // Show a generic message to prevent email enumeration
         toast({
-            title: 'Permintaan Reset Berhasil',
-            description: 'Jika ada akun dengan email tersebut, kami telah mengirimkan instruksi reset.',
+            title: 'Reset Request Successful',
+            description: 'If an account exists with that email, we have sent reset instructions.',
         });
     }
     
@@ -50,15 +50,15 @@ export default function ForgotPasswordPage() {
 
   return (
     <AuthLayout
-      title="Lupa Kata Sandi"
-      description="Masukkan email Anda untuk menerima tautan reset kata sandi"
+      title="Forgot Password"
+      description="Enter your email to receive a password reset link"
     >
       <form onSubmit={handlePasswordResetRequest} className="grid gap-4">
         <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
                 id="email"
-                placeholder="nama@contoh.com"
+                placeholder="name@example.com"
                 type="email"
                 autoComplete="email"
                 value={email}
@@ -70,13 +70,13 @@ export default function ForgotPasswordPage() {
         
         <Button type="submit" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Kirim Tautan Reset
+            Send Reset Link
         </Button>
         
         <p className="px-8 text-center text-sm text-muted-foreground">
-          Ingat kata sandi Anda?{' '}
+          Remember your password?{' '}
           <Link href="/login" className="underline underline-offset-4 hover:text-primary">
-            Masuk
+            Sign In
           </Link>
         </p>
       </form>

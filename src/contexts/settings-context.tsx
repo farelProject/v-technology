@@ -5,8 +5,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const defaultSettings: Settings = {
   theme: 'system',
-  aiStyle: 'Ceria',
-  aiModel: 'Asisten',
+  aiStyle: 'Cheerful',
+  aiModel: 'General Assistant',
 };
 
 interface SettingsContextType {

@@ -193,7 +193,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
         {isUser && message.isLoading && (
             <div className="flex items-center space-x-2 text-primary-foreground/80">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Mengunggah gambar...</span>
+                <span>Uploading image...</span>
             </div>
         )}
 

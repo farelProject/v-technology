@@ -10,8 +10,8 @@ export interface Message {
 }
 
 export type AiMode = 'chat' | 'image' | 'search';
-export type AiStyle = 'Ceria' | 'Gaul' | 'Professional';
-export type AiModel = 'Asisten' | 'Programmer' | 'Dokter';
+export type AiStyle = 'Cheerful' | 'Professional' | 'Sarcastic' | 'Enthusiastic' | 'Poetic';
+export type AiModel = 'General Assistant' | 'Programmer' | 'Creative Writer' | 'Scientist' | 'Historian';
 
 export interface Settings {
   theme: 'light' | 'dark' | 'system';

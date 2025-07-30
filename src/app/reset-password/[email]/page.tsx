@@ -44,7 +44,7 @@ export default function ResetPasswordPage({ params }: { params: { email: string 
       } else {
         toast({
           title: 'Error',
-          description: result.message || 'Token reset tidak valid atau telah kedaluwarsa.',
+          description: result.message || 'Password reset token is invalid or has expired.',
           variant: 'destructive',
         });
         setIsValidToken(false);
@@ -60,7 +60,7 @@ export default function ResetPasswordPage({ params }: { params: { email: string 
     if (password !== confirmPassword) {
       toast({
         title: 'Error',
-        description: 'Kata sandi tidak cocok.',
+        description: 'Passwords do not match.',
         variant: 'destructive'
       });
       return;
@@ -68,7 +68,7 @@ export default function ResetPasswordPage({ params }: { params: { email: string 
     if (password.length < 6) {
         toast({
             title: 'Error',
-            description: 'Kata sandi harus minimal 6 karakter.',
+            description: 'Password must be at least 6 characters long.',
             variant: 'destructive'
         });
         return;
@@ -78,8 +78,8 @@ export default function ResetPasswordPage({ params }: { params: { email: string 
     const result = await resetPassword(token, password);
     if(result.success) {
         toast({
-            title: 'Sukses',
-            description: 'Kata sandi Anda telah berhasil direset. Silakan masuk.',
+            title: 'Success',
+            description: 'Your password has been reset successfully. Please log in.',
         });
         router.push('/login');
     } else {
@@ -94,7 +94,7 @@ export default function ResetPasswordPage({ params }: { params: { email: string 
 
   if (isLoading) {
     return (
-       <AuthLayout title="Memverifikasi..." description="Harap tunggu sebentar.">
+       <AuthLayout title="Verifying..." description="Please wait a moment.">
          <Loader2 className="mx-auto h-8 w-8 animate-spin" />
        </AuthLayout>
     )
@@ -102,9 +102,9 @@ export default function ResetPasswordPage({ params }: { params: { email: string 
 
   if (!isValidToken) {
      return (
-       <AuthLayout title="Token Tidak Valid" description="Tautan reset kata sandi ini tidak valid atau telah kedaluwarsa.">
+       <AuthLayout title="Invalid Token" description="This password reset link is invalid or has expired.">
          <Button asChild className="w-full">
-            <Link href="/forgot-password">Minta Tautan Baru</Link>
+            <Link href="/forgot-password">Request a New Link</Link>
           </Button>
        </AuthLayout>
     )
@@ -112,14 +112,14 @@ export default function ResetPasswordPage({ params }: { params: { email: string 
 
   return (
     <AuthLayout
-      title="Reset Kata Sandi Anda"
-      description={`Memperbarui kata sandi untuk ${maskEmail(userEmail)}`}
+      title="Reset Your Password"
+      description={`Updating password for ${maskEmail(userEmail)}`}
     >
       <Card className="w-full border-none shadow-none">
         <CardContent className="p-0">
           <form onSubmit={handleResetSubmit} className="grid gap-4">
              <div className="grid gap-2">
-                <Label htmlFor="new-password">Kata Sandi Baru</Label>
+                <Label htmlFor="new-password">New Password</Label>
                 <Input
                     id="new-password"
                     type="password"
@@ -131,7 +131,7 @@ export default function ResetPasswordPage({ params }: { params: { email: string 
                 />
              </div>
              <div className="grid gap-2">
-                <Label htmlFor="confirm-password">Konfirmasi Kata Sandi Baru</Label>
+                <Label htmlFor="confirm-password">Confirm New Password</Label>
                 <Input
                     id="confirm-password"
                     type="password"
@@ -145,7 +145,7 @@ export default function ResetPasswordPage({ params }: { params: { email: string 
 
             <Button type="submit" disabled={isResetting} className="w-full">
                {isResetting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-               Reset Kata Sandi
+               Reset Password
             </Button>
           </form>
         </CardContent>

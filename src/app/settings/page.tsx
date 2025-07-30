@@ -55,7 +55,7 @@ export default function SettingsPage() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="ai-style">Gaya AI</Label>
+              <Label htmlFor="ai-style">AI Style</Label>
               <Select
                 value={settings.aiStyle}
                 onValueChange={(value) => handleSettingChange('aiStyle', value as AiStyle)}
@@ -64,14 +64,16 @@ export default function SettingsPage() {
                   <SelectValue placeholder="Select AI style" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Ceria">Ceria</SelectItem>
-                  <SelectItem value="Gaul">Gaul</SelectItem>
+                  <SelectItem value="Cheerful">Cheerful</SelectItem>
                   <SelectItem value="Professional">Professional</SelectItem>
+                  <SelectItem value="Sarcastic">Sarcastic</SelectItem>
+                  <SelectItem value="Enthusiastic">Enthusiastic</SelectItem>
+                  <SelectItem value="Poetic">Poetic</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="ai-model">Model AI</Label>
+              <Label htmlFor="ai-model">AI Model</Label>
               <Select
                 value={settings.aiModel}
                 onValueChange={(value) => handleSettingChange('aiModel', value as AiModel)}
@@ -80,9 +82,11 @@ export default function SettingsPage() {
                   <SelectValue placeholder="Select AI model" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Asisten">Asisten</SelectItem>
+                  <SelectItem value="General Assistant">General Assistant</SelectItem>
                   <SelectItem value="Programmer">Programmer</SelectItem>
-                  <SelectItem value="Dokter">Dokter</SelectItem>
+                  <SelectItem value="Creative Writer">Creative Writer</SelectItem>
+                  <SelectItem value="Scientist">Scientist</SelectItem>
+                  <SelectItem value="Historian">Historian</SelectItem>
                 </SelectContent>
               </Select>
             </div>

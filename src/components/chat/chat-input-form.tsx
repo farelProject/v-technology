@@ -23,17 +23,17 @@ interface ChatInputFormProps {
 const modeConfig = {
     chat: {
         icon: MessageSquare,
-        placeholder: 'Tanya VTech AI...',
+        placeholder: 'Ask VTech AI...',
         label: 'Chat',
     },
     image: {
         icon: ImageIcon,
-        placeholder: 'Buat gambar dengan VTech AI...',
+        placeholder: 'Create an image with VTech AI...',
         label: 'Generate Image',
     },
     search: {
         icon: Search,
-        placeholder: 'Cari di web dengan VTech AI...',
+        placeholder: 'Search the web with VTech AI...',
         label: 'Search',
     }
 }
@@ -58,8 +58,8 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
   const handleAuthGuard = (featureName: string) => {
       if (!user) {
           toast({
-              title: 'Akses Ditolak',
-              description: `Anda harus login untuk menggunakan fitur ${featureName}.`,
+              title: 'Access Denied',
+              description: `You must be logged in to use the ${featureName} feature.`,
               variant: 'destructive'
           });
           return false;
@@ -98,13 +98,13 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
   };
   
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!handleAuthGuard('upload file')) return;
+    if (!handleAuthGuard('file upload')) return;
     const file = event.target.files?.[0];
     if (file) {
         if (!SUPPORTED_IMAGE_MIME_TYPES.includes(file.type)) {
             toast({
-                title: 'Jenis File Tidak Didukung',
-                description: `Hanya file gambar (JPEG, PNG, WebP) yang didukung.`,
+                title: 'Unsupported File Type',
+                description: `Only image files (JPEG, PNG, WebP) are supported.`,
                 variant: 'destructive',
             });
             clearFile();
@@ -137,7 +137,7 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
   };
 
   const handleUploadClick = () => {
-    if (!handleAuthGuard('upload file')) return;
+    if (!handleAuthGuard('file upload')) return;
     fileInputRef.current?.click();
   };
 
@@ -151,7 +151,7 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (mode !== 'chat' && !handleAuthGuard(`mode ${mode}`)) {
+    if (mode !== 'chat' && !handleAuthGuard(`${mode} mode`)) {
       return;
     }
     if (input.trim() || selectedFile) {
@@ -169,7 +169,7 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
   };
 
   const handleModeChange = (newMode: AiMode) => {
-    if (newMode !== 'chat' && !handleAuthGuard(`mode ${newMode}`)) {
+    if (newMode !== 'chat' && !handleAuthGuard(`${newMode} mode`)) {
         return;
     }
     setMode(newMode);

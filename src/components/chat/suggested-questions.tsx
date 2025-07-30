@@ -11,12 +11,12 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 
 const questions = [
-  'Apa itu kecerdasan buatan?',
-  'Tuliskan sebuah puisi tentang alam.',
-  'Berikan saya resep kue cokelat.',
-  'Buatkan saya kode Python untuk web scraping.',
-  'Bagaimana cara kerja mobil listrik?',
-  'Jelaskan teori relativitas Einstein.',
+  'What is artificial intelligence?',
+  'Write a poem about nature.',
+  'Give me a recipe for chocolate cake.',
+  'Create Python code for web scraping.',
+  'How do electric cars work?',
+  'Explain Einstein\'s theory of relativity.',
 ];
 
 interface SuggestedQuestionsProps {
