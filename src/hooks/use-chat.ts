@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useTransition, useEffect, useCallback } from 'react';
@@ -29,40 +30,48 @@ export function useChat(chatId: string | null) {
   // Load chat session
   useEffect(() => {
     if (!user) return;
-
-    if (chatId) {
-      getChatSession(user.id, chatId).then((loadedSession) => {
-        if (loadedSession) {
-          setSession(loadedSession);
-          setMessages(loadedSession.messages);
+    
+    const loadSession = async () => {
+        if (chatId) {
+          getChatSession(user.id, chatId).then((loadedSession) => {
+            if (loadedSession) {
+              setSession(loadedSession);
+              setMessages(loadedSession.messages);
+            } else {
+              // If chat ID is invalid, redirect to new chat
+              toast({ title: "Chat not found", variant: "destructive" });
+              router.push('/');
+            }
+          });
         } else {
-          // If chat ID is invalid, redirect to new chat
-          toast({ title: "Chat not found", variant: "destructive" });
-          router.push('/');
+          // If it's a new chat, create a new session object
+          const newSession = await createNewChatSession(user.id);
+          setSession(newSession);
+          setMessages(newSession.messages); // messages will be []
         }
-      });
-    } else {
-      // If it's a new chat, reset state
-      const newSession = createNewChatSession(user.id);
-      setSession(newSession);
-      setMessages(newSession.messages);
-    }
+    };
+    
+    loadSession();
+
   }, [chatId, user, router, toast]);
   
-  const handleSaveSession = useCallback(async (updatedMessages: Message[]) => {
-      if (!user || !session) return;
+  const handleSaveSession = useCallback(async (updatedMessages: Message[], currentSession: ChatSession) => {
+      if (!user) return null;
       
-      let sessionToSave = { ...session, messages: updatedMessages };
+      let sessionToSave = { ...currentSession, messages: updatedMessages };
 
       // Generate a title for new chats from the first user message
       if (updatedMessages.length > 0 && !sessionToSave.title) {
-        sessionToSave.title = updatedMessages[0].content.substring(0, 50) + '...';
+        const firstUserMessage = updatedMessages.find(m => m.role === 'user');
+        if (firstUserMessage) {
+            sessionToSave.title = firstUserMessage.content.substring(0, 50) + '...';
+        }
       }
       
       await saveChatSession(user.id, sessionToSave);
-      setSession(sessionToSave); // Update local session state
+      return sessionToSave;
 
-  }, [session, user]);
+  }, [user]);
 
 
   const handleSend = (mode: AiMode, input: string, fileDataUri?: string) => {
@@ -109,7 +118,7 @@ export function useChat(chatId: string | null) {
             if (mode === 'chat') {
                const result = await chat({ query: queryWithInstruction, file: fileDataUri });
                assistantMessage = {
-                 id: loadingMessageId,
+                 id: loadingMessage.id,
                  role: 'assistant',
                  content: result.response,
                  type: 'text',
@@ -117,7 +126,7 @@ export function useChat(chatId: string | null) {
             } else if (mode === 'search') {
               const result = await chatWithSearch({ query: queryWithInstruction, file: fileDataUri });
               assistantMessage = {
-                id: loadingMessageId,
+                id: loadingMessage.id,
                 role: 'assistant',
                 content: result.response,
                 type: 'text',
@@ -132,7 +141,7 @@ export function useChat(chatId: string | null) {
               }
 
               assistantMessage = {
-                id: loadingMessageId,
+                id: loadingMessage.id,
                 role: 'assistant',
                 content: `Here is the image you requested for: "${input}"`,
                 type: 'image',
@@ -144,8 +153,12 @@ export function useChat(chatId: string | null) {
 
             const finalMessages = [...updatedMessages, assistantMessage];
 
-            setMessages(finalMessages);
-            await handleSaveSession(finalMessages);
+            const savedSession = await handleSaveSession(finalMessages, session);
+
+            if (savedSession) {
+                setSession(savedSession);
+                setMessages(savedSession.messages);
+            }
 
             // If this was a new chat, redirect to the new chat's URL
             if (!chatId) {

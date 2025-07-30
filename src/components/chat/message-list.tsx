@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useEffect, useRef } from 'react';
@@ -33,8 +34,8 @@ export function MessageList({
     onSend('chat', question);
   };
 
-  // Show suggestions if messages are loaded, the list is empty, user is logged in, and not loading.
-  const showSuggestions = messages && messages.length === 0 && !isLoading && user;
+  // Show suggestions if messages are loaded, the list is empty, it's a new chat, user is logged in, and not loading.
+  const showSuggestions = isNewChat && messages && messages.length === 0 && !isLoading && user;
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8">
@@ -45,6 +46,9 @@ export function MessageList({
         {messages && messages.map((msg) => (
           <ChatMessage key={msg.id} message={msg} />
         ))}
+        {isLoading && messages.length > 0 && messages[messages.length -1].role === 'user' &&(
+          <ChatMessage key="loading" message={{id: 'loading', role: 'assistant', content: '...'}} />
+        )}
       </div>
       <div ref={scrollRef} />
     </div>
