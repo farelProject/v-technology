@@ -59,19 +59,19 @@ export function useChat(chatId: string | null) {
 
     const loadSession = async () => {
       if (chatId) {
-        getChatSession(user.id, chatId).then((loadedSession) => {
-          if (loadedSession) {
-            setSession(loadedSession);
-            setMessages(loadedSession.messages);
-          } else {
-            toast({ title: 'Chat not found', variant: 'destructive' });
-            router.push('/');
-          }
-        });
+        const loadedSession = await getChatSession(user.id, chatId);
+        if (loadedSession) {
+          setSession(loadedSession);
+          setMessages(loadedSession.messages);
+        } else {
+          toast({ title: 'Chat not found', variant: 'destructive' });
+          router.push('/');
+        }
       } else {
+        // For new chats, create a session object but don't save it yet.
         const newSession = await createNewChatSession(user.id);
         setSession(newSession);
-        setMessages(newSession.messages);
+        setMessages(newSession.messages); // Should be []
       }
     };
 
@@ -84,6 +84,7 @@ export function useChat(chatId: string | null) {
 
       let sessionToSave = { ...currentSession, messages: updatedMessages };
 
+      // Set title only if it's not already set
       if (updatedMessages.length > 0 && !sessionToSave.title) {
         const firstUserMessage = updatedMessages.find((m) => m.role === 'user');
         if (firstUserMessage) {
@@ -96,14 +97,6 @@ export function useChat(chatId: string | null) {
     },
     [user]
   );
-
-  const updateMessage = (messageId: string, updates: Partial<Message>) => {
-    setMessages((prev) =>
-      prev.map((msg) =>
-        msg.id === messageId ? { ...msg, ...updates } : msg
-      )
-    );
-  };
 
   const handleSend = (mode: AiMode, input: string, fileDataUri?: string) => {
     if (!user) {
@@ -118,24 +111,19 @@ export function useChat(chatId: string | null) {
       id: userMessageId,
       role: 'user',
       content: input,
-      isLoading: !!fileDataUri,
-      userId: user.id
+      userId: user.id,
+      isLoading: !!fileDataUri
     };
     
     setMessages((prev) => [...prev, userMessage]);
 
     startTransition(async () => {
-      let uploadedImageUrl: string | undefined = undefined;
       let fileForAi: string | undefined = fileDataUri;
 
       if (fileDataUri) {
           const uploadResult = await uploadImageToServer(fileDataUri, user.id);
           if (uploadResult.success && uploadResult.url) {
-            uploadedImageUrl = uploadResult.url;
-            updateMessage(userMessageId, {
-              isLoading: false,
-              image_url: uploadedImageUrl,
-            });
+            setMessages(prev => prev.map(msg => msg.id === userMessageId ? {...msg, isLoading: false, image_url: uploadResult.url} : msg));
           } else {
              toast({
                 title: 'Image Upload Failed',
@@ -202,18 +190,20 @@ export function useChat(chatId: string | null) {
           throw new Error(`Unknown mode: ${mode}`);
         }
         
+        // This is a safer way to update the loading message
         setMessages((prev) => 
             prev.map((msg) =>
                 msg.id === loadingMessageId ? assistantMessage : msg
             )
         );
         
+        // This is a safer way to save the session
         setMessages((currentMessages) => {
-          const savedSessionPromise = handleSaveSession(currentMessages, session);
-          savedSessionPromise.then((savedSession) => {
+          handleSaveSession(currentMessages, session).then((savedSession) => {
             if (savedSession) {
               setSession(savedSession);
               if (!chatId) {
+                // Navigate to the new chat URL without a full page reload
                 router.replace(`/?id=${savedSession.id}`, { scroll: false });
               }
             }
@@ -230,9 +220,8 @@ export function useChat(chatId: string | null) {
             userFriendlyMessage = 'Model AI sedang sibuk. Silakan coba lagi beberapa saat.';
         }
 
-        updateMessage(loadingMessageId, {
-          content: userFriendlyMessage,
-        });
+        setMessages(prev => prev.map(msg => msg.id === loadingMessageId ? {...msg, content: userFriendlyMessage } : msg));
+
         toast({
           title: 'Error',
           description: userFriendlyMessage,

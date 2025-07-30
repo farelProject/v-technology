@@ -114,6 +114,26 @@
           "type": "text"
         }
       ]
+    },
+    {
+      "id": "1753883435797",
+      "title": "Apa itu kecerdasan buatan?...",
+      "timestamp": "2025-07-30T13:50:35.797Z",
+      "messages": [
+        {
+          "id": "1753883437997-0.47121137623929676",
+          "role": "user",
+          "content": "Apa itu kecerdasan buatan?",
+          "isLoading": false
+        },
+        {
+          "id": "1753883437998",
+          "role": "assistant",
+          "content": "Kecerdasan Buatan (AI) itu seperti memberikan \"otak\" kepada komputer atau mesin! Jadi, alih-alih hanya mengikuti perintah yang kita berikan langkah demi langkah, AI bisa belajar, berpikir, dan membuat keputusan sendiri, mirip seperti manusia. Contohnya, AI bisa mengenali wajah di foto, memberikan rekomendasi film yang mungkin kamu suka, atau bahkan mengemudikan mobil secara otomatis! Seru, kan?",
+          "type": "text",
+          "userId": "assistant"
+        }
+      ]
     }
   ],
   "1753853813182": [
