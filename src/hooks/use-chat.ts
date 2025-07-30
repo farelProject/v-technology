@@ -89,13 +89,13 @@ export function useChat(chatId: string | null) {
     // Ensure user message and loading message have unique IDs
     const timestamp = Date.now();
     const userMessageId = `${timestamp}-${Math.random()}`;
-    const loadingMessageId = `${timestamp + 1}`;
+    const loadingMessageId = `${timestamp}`;
     
     startTransition(async () => {
         try {
             let uploadedImageUrl: string | undefined = undefined;
             if (fileDataUri) {
-                // Upload image to ImgBB first
+                // Upload user-provided image to ImgBB first
                 const uploadResult = await uploadImage(fileDataUri);
                 if (uploadResult.success) {
                     uploadedImageUrl = uploadResult.url;
@@ -108,7 +108,7 @@ export function useChat(chatId: string | null) {
               id: userMessageId,
               role: 'user',
               content: input,
-              image_url: uploadedImageUrl, // Use the new ImgBB URL
+              image_url: uploadedImageUrl, // Use the new ImgBB URL for user uploads
             };
 
             const updatedMessages = [...messages, userMessage];
@@ -141,18 +141,12 @@ export function useChat(chatId: string | null) {
               };
             } else if (mode === 'image') {
               const result = await generateImage({ prompt: input });
-              // Upload the generated image as well
-              const genImgUploadResult = await uploadImage(result.imageUrl);
-              if (!genImgUploadResult.success) {
-                  throw new Error('Failed to save generated image.');
-              }
-
               assistantMessage = {
                 id: loadingMessageId,
                 role: 'assistant',
                 content: `Here is the image you requested for: "${input}"`,
                 type: 'image',
-                image_url: genImgUploadResult.url, // Save the ImgBB URL
+                image_url: result.imageUrl, // Use the direct data URI from the AI
               };
             } else {
                 throw new Error(`Unknown mode: ${mode}`);
