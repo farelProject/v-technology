@@ -12,7 +12,7 @@ export interface Message {
 
 export type AiMode = 'chat' | 'image' | 'search';
 export type AiStyle = 'Cheerful' | 'Professional' | 'Sarcastic' | 'Enthusiastic' | 'Poetic' | 'Storyteller' | 'Comedian' | 'Philosopher';
-export type AiModel = 'General Assistant' | 'Programmer' | 'Creative Writer' | 'Scientist' | 'Historian' | 'Linguist' | 'Debater' | 'Fact Checker';
+export type AiModel = 'General Assistant' | 'Programmer' | 'Creative Writer' | 'Scientist' | 'Historian' | 'Doctor' | 'Teacher' | 'Chef' | 'Fitness Coach' | 'Firefighter';
 
 
 export interface Settings {
