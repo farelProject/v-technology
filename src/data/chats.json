@@ -39,6 +39,66 @@
           "type": "text"
         }
       ]
+    },
+    {
+      "id": "1753883939510",
+      "title": "Apa itu kecerdasan buatan?...",
+      "timestamp": "2025-07-30T13:58:59.510Z",
+      "messages": [
+        {
+          "id": "1753883940678-0.9417719800375989",
+          "role": "user",
+          "content": "Apa itu kecerdasan buatan?",
+          "isLoading": false
+        },
+        {
+          "id": "1753883940679",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Kecerdasan Buatan (AI) itu seperti memberikan \"otak\" kepada komputer atau mesin! Bayangkan kamu mengajari robot untuk berpikir sendiri, seperti manusia. AI bisa belajar dari pengalaman, memecahkan masalah, dan bahkan membuat keputusan. Contohnya, ada AI yang bisa memprediksi cuaca, merekomendasikan film yang mungkin kamu suka, atau bahkan mengemudikan mobil sendiri! Seru, kan?",
+          "type": "text"
+        },
+        {
+          "id": "1753883959641-0.3529811373626429",
+          "role": "user",
+          "content": "Ai pumya otak? ",
+          "isLoading": false
+        },
+        {
+          "id": "1753883959641",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Sebagai model AI, saya tidak memiliki otak fisik seperti manusia. Saya adalah program komputer yang dilatih dengan data untuk menghasilkan respons yang relevan dan membantu.",
+          "type": "text"
+        },
+        {
+          "id": "1753883974592-0.6574393524909437",
+          "role": "user",
+          "content": "Kamu dibuat oleh siapa? ",
+          "isLoading": false
+        },
+        {
+          "id": "1753883974592",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Saya V-technology atau Vtech AI, dibuat oleh Farel Alfareza.",
+          "type": "text"
+        },
+        {
+          "id": "1753883988321-0.4102282054186961",
+          "role": "user",
+          "content": "Moon",
+          "isLoading": false
+        },
+        {
+          "id": "1753883988321",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Here is the image you requested for: \"Moon\"",
+          "type": "image",
+          "image_url": "/uploads/12baec99-bc66-46b6-8e15-2f26cea51aeb.png"
+        }
+      ]
     }
   ],
   "1753853813182": [

@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
+  DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
@@ -96,6 +98,9 @@ const ImageDisplay = ({ src, alt }: { src: string; alt: string }) => {
       </div>
     </DialogTrigger>
     <DialogContent className="max-w-3xl">
+       <DialogHeader>
+        <DialogTitle className="sr-only">Image Preview</DialogTitle>
+      </DialogHeader>
       <Image
         src={src}
         alt={alt}
