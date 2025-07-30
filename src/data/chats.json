@@ -55,5 +55,28 @@
       ]
     }
   ],
-  "1753853813182": []
+  "1753853813182": [
+    {
+      "id": "1753887290008",
+      "userId": "guest",
+      "title": "What is artificial intelligence?...",
+      "timestamp": "2025-07-30T14:54:50.008Z",
+      "messages": [
+        {
+          "id": "1753887299786-0.2562847737709658",
+          "role": "user",
+          "content": "What is artificial intelligence?",
+          "userId": "1753853813182",
+          "isLoading": false
+        },
+        {
+          "id": "1753887299787",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Artificial intelligence (AI) is a broad field encompassing the development of computer systems capable of performing tasks that typically require human intelligence. These tasks include learning, problem-solving, decision-making, speech recognition, and visual perception. AI can be achieved through various techniques such as machine learning (where systems learn from data), deep learning (using artificial neural networks), and rule-based systems (where systems follow predefined rules). In essence, AI aims to create machines that can think and act intelligently.",
+          "type": "text"
+        }
+      ]
+    }
+  ]
 }

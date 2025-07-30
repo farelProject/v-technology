@@ -88,27 +88,24 @@ export function Sidebar({ onLinkClick }: SidebarProps) {
                     Donate
                  </Button>
             </Link>
-             {!user && (
+             {!user ? (
                 <Link href="/login" passHref>
                      <Button variant="outline" className="w-full justify-start" onClick={handleLinkClick}>
                         <LogIn className="mr-3 h-5 w-5" />
                         Login / Register
                     </Button>
                 </Link>
+             ) : (
+                <>
+                  <p className='text-sm text-center text-muted-foreground pt-2'>Signed in as {user.name}</p>
+                  <Button variant="outline" className="w-full justify-start" onClick={handleLogout}>
+                      <LogOut className="mr-3 h-5 w-5" />
+                      Logout
+                  </Button>
+                </>
              )}
         </nav>
       </ScrollArea>
-      <div className="mt-auto border-t p-4">
-         {user && (
-            <div className='space-y-2'>
-                <p className='text-sm text-center text-muted-foreground'>Signed in as {user.name}</p>
-                <Button variant="outline" className="w-full justify-start" onClick={handleLogout}>
-                    <LogOut className="mr-3 h-5 w-5" />
-                    Logout
-                </Button>
-            </div>
-         )}
-      </div>
     </div>
   );
 }
