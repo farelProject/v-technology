@@ -57,3 +57,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes wave {
+  0%, 60%, 100% {
+    transform: initial;
+  }
+  30% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-wave .dot {
+  animation: wave 1.3s ease-in-out infinite;
+}

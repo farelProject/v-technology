@@ -20,32 +20,10 @@ import type { Message } from '@/lib/types';
 import { CodeBlock } from './code-block';
 import { Separator } from '../ui/separator';
 import { motion } from 'framer-motion';
+import { VTechIcon } from '../vtech-icon';
 
 interface ChatMessageProps {
   message: Message;
-}
-
-function VTechIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M16.5 7.5h-9" />
-      <path d="M16.5 16.5h-9" />
-      <path d="M12 2a10 10 0 0 0-10 10 10 10 0 0 0 10 10 10 10 0 0 0 10-10 10 10 0 0 0-10-10Z" />
-      <path d="m12 12-2-2" />
-      <path d="m14 14-2-2" />
-    </svg>
-  );
 }
 
 const parseMessageContent = (content: string) => {
@@ -113,11 +91,24 @@ const ImageDisplay = ({ src, alt }: { src: string; alt: string }) => {
   )
 };
 
+const LoadingDots = () => {
+    return (
+        <div className="flex items-center space-x-1 animate-wave">
+            <span className="dot w-2 h-2 bg-current rounded-full" style={{ animationDelay: '0.2s' }}></span>
+            <span className="dot w-2 h-2 bg-current rounded-full" style={{ animationDelay: '0.4s' }}></span>
+            <span className="dot w-2 h-2 bg-current rounded-full" style={{ animationDelay: '0.6s' }}></span>
+            <span className="dot w-2 h-2 bg-current rounded-full" style={{ animationDelay: '0.8s' }}></span>
+        </div>
+    )
+}
+
 
 export function ChatMessage({ message }: ChatMessageProps) {
   const { toast } = useToast();
   const isUser = message.role === 'user';
   const isAssistant = message.role === 'assistant';
+  const isLoading = isAssistant && message.content === '...';
+
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -180,14 +171,14 @@ export function ChatMessage({ message }: ChatMessageProps) {
       )}
       <div
         className={cn(
-          'rounded-lg p-4 space-y-2',
+          'block rounded-lg p-4 space-y-2',
           isUser
             ? 'bg-primary text-primary-foreground max-w-[90%]'
             : 'bg-card text-card-foreground shadow-sm max-w-[90%] w-fit'
         )}
       >
         <div className="space-y-2">
-          {message.content && parseMessageContent(message.content)}
+          {isLoading ? <LoadingDots /> : message.content && parseMessageContent(message.content)}
         </div>
         
         {isUser && message.isLoading && (
@@ -235,7 +226,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
             </Card>
           </div>
         )}
-        {isAssistant && message.content && message.content !== '...' && (
+        {isAssistant && !isLoading && message.content && (
           <div className="mt-2 flex items-center space-x-2">
             <Button
               variant="ghost"
