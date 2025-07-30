@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 import { useToast } from './use-toast';
 import { chatWithSearch } from '@/ai/flows/chat-with-search';
 import { generateImage } from '@/ai/flows/generate-image';
-import type { Message, AiMode, AiStyle, AiModel } from '@/lib/types';
+import type { Message, AiMode } from '@/lib/types';
 import { useSettings } from '@/contexts/settings-context';
 
 export function useChat() {
@@ -42,14 +42,12 @@ export function useChat() {
           
           const result = await chatWithSearch({ query: queryWithInstruction });
           
-          const searchResults = (result as any).toolCalls?.[0]?.tool.webSearch.output;
-
           const assistantMessage: Message = {
             id: loadingMessage.id,
             role: 'assistant',
             content: result.response,
             type: 'text',
-            search_results: searchResults
+            search_results: result.searchResults
           };
           setMessages((prev) =>
             prev.map((m) => (m.id === loadingMessage.id ? assistantMessage : m))

@@ -14,8 +14,15 @@ const ChatWithSearchInputSchema = z.object({
 });
 export type ChatWithSearchInput = z.infer<typeof ChatWithSearchInputSchema>;
 
+const SearchResultItemSchema = z.object({
+  title: z.string(),
+  description: z.string().describe('AI-generated description for the search result.'),
+  link: z.string().url(),
+});
+
 const ChatWithSearchOutputSchema = z.object({
-  response: z.string().describe('The AI response to the query.'),
+  response: z.string().describe('A brief, one-sentence introductory response from the AI.'),
+  searchResults: z.array(SearchResultItemSchema).optional(),
 });
 export type ChatWithSearchOutput = z.infer<typeof ChatWithSearchOutputSchema>;
 
@@ -31,40 +38,18 @@ const webSearch = ai.defineTool({
   }),
   outputSchema: z.array(z.object({
     title: z.string(),
-    description: z.string(),
     link: z.string().url(),
+    // The websearch tool no longer provides its own description.
   })),
 },
 async (input) => {
     // Placeholder for web search implementation.
-    // In a real application, this would call an external search API.
-    // For this example, we return dummy data.
     return [
-      {
-        title: 'Dummy Search Result 1',
-        description: 'This is a dummy search result for testing purposes.',
-        link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 1')}`,
-      },
-      {
-        title: 'Dummy Search Result 2',
-        description: 'Another dummy search result to demonstrate web search functionality.',
-        link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 2')}`,
-      },
-      {
-        title: 'Dummy Search Result 3',
-        description: 'A third dummy item for the web search results.',
-        link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 3')}`,
-      },
-      {
-        title: 'Dummy Search Result 4',
-        description: 'A fourth dummy item to complete the list.',
-        link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 4')}`,
-      },
-      {
-        title: 'Dummy Search Result 5',
-        description: 'And a final, fifth dummy item to complete the list.',
-        link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 5')}`,
-      },
+      { title: 'Dummy Search Result 1', link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 1')}` },
+      { title: 'Dummy Search Result 2', link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 2')}` },
+      { title: 'Dummy Search Result 3', link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 3')}` },
+      { title: 'Dummy Search Result 4', link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 4')}` },
+      { title: 'Dummy Search Result 5', link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 5')}` },
     ];
   }
 );
@@ -72,64 +57,39 @@ async (input) => {
 const chatWithSearchPrompt = ai.definePrompt({
   name: 'chatWithSearchPrompt',
   input: {schema: ChatWithSearchInputSchema},
+  output: {schema: ChatWithSearchOutputSchema},
   tools: [webSearch],
   system: `You are V-technology or Vtech AI, created by Farel Alfareza.
-- You are a helpful assistant that provides informative and accurate responses.
-- If the user asks a question that requires up-to-date information, specific facts, or knowledge beyond your training data, you MUST use the webSearch tool.
-- When using the webSearch tool, analyze the search results and incorporate them into your response to provide a comprehensive answer.
-- You MUST cite the sources from the search results when you use them.
-- If the question is conversational or can be answered from your existing knowledge, you do not need to use the webSearch tool.
+- You are a helpful assistant.
+- You MUST use the webSearch tool to answer the user's query.
+- After getting the search results, you MUST generate a new, insightful description for EACH of the 5 search results.
 - Your final output MUST BE a valid JSON object that strictly conforms to the output schema.
-- The JSON object must have a 'response' property containing your answer.
-- Do not output anything other than the JSON object itself. For example, do not include markdown formatting like \`\`\`json\`\`\`.`,
-  output: {
-    schema: ChatWithSearchOutputSchema,
-  },
+- The 'response' field should be a single, short introductory sentence like "Here are the search results for your query."
+- The 'searchResults' field must contain an array of 5 objects, each with a title, the AI-generated description, and a link.
+- Do not output anything other than the JSON object itself.`,
   prompt: `{{query}}`,
 });
+
 
 const chatWithSearchFlow = ai.defineFlow(
   {
     name: 'chatWithSearchFlow',
     inputSchema: ChatWithSearchInputSchema,
-    outputSchema: z.any(),
+    outputSchema: ChatWithSearchOutputSchema,
   },
   async (input) => {
     const llmResponse = await chatWithSearchPrompt(input);
-    const toolCalls = llmResponse.toolCalls;
+    const output = llmResponse.output;
 
-    let parsedResponse: ChatWithSearchOutput;
-    try {
-      const output = llmResponse.output;
-      if (output) {
-        parsedResponse = output;
-      } else {
-        const jsonResponse = JSON.parse(llmResponse.text ?? '{}');
-        parsedResponse = ChatWithSearchOutputSchema.parse(jsonResponse);
-      }
-    } catch (e) {
-      // Not a JSON response, just use the text.
-      parsedResponse = { response: llmResponse.text ?? "I'm sorry, I couldn't generate a response." };
+    if (output) {
+      return output;
     }
 
-
-    const assistantMessage = {
-      response: parsedResponse.response,
-      toolCalls: [] as any,
+    // Fallback if the model fails to return structured JSON
+    console.error("AI did not return valid JSON output. Using fallback.", llmResponse.text);
+    return {
+        response: "I'm sorry, I encountered an error while processing the search results. Please try again.",
+        searchResults: [],
     };
-
-    if (toolCalls && toolCalls.length > 0) {
-      const toolCall = toolCalls[0];
-      const toolOutput = await toolCall.tool.fn(toolCall.input);
-      assistantMessage.toolCalls.push({
-        tool: {
-          webSearch: {
-            output: toolOutput,
-          },
-        },
-      });
-    }
-
-    return assistantMessage;
   }
 );
