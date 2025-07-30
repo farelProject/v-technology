@@ -1,135 +1,20 @@
 {
   "undefined": [
     {
-      "id": "1753853888414",
-      "title": "Halo...",
-      "timestamp": "2025-07-30T05:38:08.414Z",
-      "messages": [
-        {
-          "id": "1753853936878-0.2200441407070387",
-          "role": "user",
-          "content": "Halo",
-          "isLoading": false
-        },
-        {
-          "id": "1753853936879",
-          "role": "assistant",
-          "content": "Halo! Ada yang bisa saya bantu hari ini? Saya siap membantu Anda dengan berbagai tugas pemrograman!",
-          "type": "text"
-        }
-      ]
-    },
-    {
-      "id": "1753882525578",
-      "title": "Halo...",
-      "timestamp": "2025-07-30T13:35:25.578Z",
-      "messages": [
-        {
-          "id": "1753882528272-0.9921009799269727",
-          "role": "user",
-          "content": "Halo",
-          "isLoading": false
-        },
-        {
-          "id": "1753882528272",
-          "role": "assistant",
-          "content": "Halo! Selamat datang! Ada yang bisa saya bantu hari ini?",
-          "type": "text"
-        }
-      ]
-    },
-    {
-      "id": "1753882647752",
-      "title": "Hslo...",
-      "timestamp": "2025-07-30T13:37:27.752Z",
-      "messages": [
-        {
-          "id": "1753882650497-0.3203446013482605",
-          "role": "user",
-          "content": "Hslo",
-          "isLoading": false
-        },
-        {
-          "id": "1753882650499",
-          "role": "assistant",
-          "content": "Halo! Ada yang bisa saya bantu? Saya seorang programmer AI yang ceria, siap membantu Anda dengan pertanyaan atau tugas pemrograman!",
-          "type": "text"
-        }
-      ]
-    },
-    {
-      "id": "1753882805117",
-      "title": "Halo...",
-      "timestamp": "2025-07-30T13:40:05.117Z",
-      "messages": [
-        {
-          "id": "1753882808159-0.768065225003532",
-          "role": "user",
-          "content": "Halo",
-          "isLoading": false
-        },
-        {
-          "id": "1753882808160",
-          "role": "assistant",
-          "content": "Halo! Ada yang bisa saya bantu hari ini?",
-          "type": "text"
-        }
-      ]
-    },
-    {
-      "id": "1753882980751",
+      "id": "1753883693425",
       "title": "Apa itu kecerdasan buatan?...",
-      "timestamp": "2025-07-30T13:43:00.751Z",
+      "timestamp": "2025-07-30T13:54:53.425Z",
       "messages": [
         {
-          "id": "1753882983171-0.07928040709898243",
+          "id": "1753883694954-0.24412191833603236",
           "role": "user",
           "content": "Apa itu kecerdasan buatan?",
           "isLoading": false
         },
         {
-          "id": "1753882983172",
+          "id": "1753883694955",
           "role": "assistant",
-          "content": "Kecerdasan Buatan (Artificial Intelligence atau AI) itu keren banget! Singkatnya, AI adalah kemampuan komputer atau mesin untuk melakukan hal-hal yang biasanya membutuhkan kecerdasan manusia. Contohnya:\n\n*   **Belajar:** Seperti manusia, AI bisa belajar dari data. Semakin banyak data yang diberikan, semakin pintar AI itu!\n*   **Memecahkan Masalah:** AI bisa mencari solusi untuk masalah yang kompleks dengan cepat.\n*   **Pengenalan Pola:** AI jago banget menemukan pola tersembunyi dalam data. Ini berguna untuk banyak hal, seperti mendeteksi penipuan atau memprediksi tren.\n*   **Memahami Bahasa Alami:** AI bisa mengerti bahasa manusia, lho! Jadi, kita bisa berinteraksi dengan komputer seperti berbicara dengan teman.\n\nSebagai programmer, aku sering pakai AI untuk:\n\n*   **Otomatisasi Tugas:** Biar gak capek, aku pakai AI untuk mengerjakan tugas-tugas yang berulang.\n*   **Menganalisis Kode:** AI bisa membantu menemukan bug atau celah keamanan dalam kodeku.\n*   **Membuat Rekomendasi:** AI bisa memberikan saran tentang cara meningkatkan performa aplikasi.\n\nIntinya, AI itu alat yang sangat powerful yang bisa membantu kita melakukan banyak hal dengan lebih efisien dan efektif! Seru, kan?",
-          "type": "text"
-        }
-      ]
-    },
-    {
-      "id": "1753883270983",
-      "title": "Tuliskan sebuah puisi tentang alam....",
-      "timestamp": "2025-07-30T13:47:50.983Z",
-      "messages": [
-        {
-          "id": "1753883274106-0.9585633472765456",
-          "role": "user",
-          "content": "Tuliskan sebuah puisi tentang alam.",
-          "isLoading": false
-        },
-        {
-          "id": "1753883274108",
-          "role": "assistant",
-          "content": "Di rimba hijau, mentari bersinar,\nBurung bernyanyi, hati berbinar.\nSungai mengalir, tenang dan damai,\nAlam memanggil, dengan irama gawai.\n\nPohon berdiri, kokoh dan tegar,\nMenjaga bumi, dari bencana besar.\nBunga bermekaran, indah berwarna,\nMenyambut pagi, dengan sukacita.\n\nAngin berhembus, sejuk terasa,\nMembawa aroma, alam yang perkasa.\nGunung menjulang, tinggi membiru,\nMenyimpan misteri, yang tak terpadu.\n\nAlam ini, anugerah Illahi,\nHarus dijaga, sepenuh hati.\nJangan dirusak, atau dicemari,\nAgar lestari, sepanjang hari.",
-          "userId": "assistant",
-          "type": "text"
-        }
-      ]
-    },
-    {
-      "id": "1753883435797",
-      "title": "Apa itu kecerdasan buatan?...",
-      "timestamp": "2025-07-30T13:50:35.797Z",
-      "messages": [
-        {
-          "id": "1753883437997-0.47121137623929676",
-          "role": "user",
-          "content": "Apa itu kecerdasan buatan?",
-          "isLoading": false
-        },
-        {
-          "id": "1753883437998",
-          "role": "assistant",
-          "content": "Kecerdasan Buatan (AI) itu seperti memberikan \"otak\" kepada komputer atau mesin! Jadi, alih-alih hanya mengikuti perintah yang kita berikan langkah demi langkah, AI bisa belajar, berpikir, dan membuat keputusan sendiri, mirip seperti manusia. Contohnya, AI bisa mengenali wajah di foto, memberikan rekomendasi film yang mungkin kamu suka, atau bahkan mengemudikan mobil secara otomatis! Seru, kan?",
+          "content": "Kecerdasan buatan (AI) itu seperti memberikan otak manusia ke komputer! Komputer jadi bisa belajar, berpikir, dan menyelesaikan masalah seperti manusia. Contohnya, AI bisa bantu kamu mencari informasi di internet, mengenali wajah temanmu di foto, atau bahkan bermain game catur. Seru kan?",
           "type": "text",
           "userId": "assistant"
         }

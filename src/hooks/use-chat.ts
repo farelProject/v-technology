@@ -16,14 +16,14 @@ import {
   createNewChatSession,
 } from '@/lib/chat-service';
 
-async function uploadImageToServer(base64Image: string, userId: string): Promise<{ success: boolean; url?: string; error?: string }> {
+async function uploadImageToServer(base64Image: string): Promise<{ success: boolean; url?: string; error?: string }> {
   try {
     const response = await fetch('/api/upload', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ image: base64Image, userId }),
+      body: JSON.stringify({ image: base64Image }),
     });
 
     const result = await response.json();
@@ -68,10 +68,9 @@ export function useChat(chatId: string | null) {
           router.push('/');
         }
       } else {
-        // For new chats, create a session object but don't save it yet.
         const newSession = await createNewChatSession(user.id);
         setSession(newSession);
-        setMessages(newSession.messages); // Should be []
+        setMessages(newSession.messages);
       }
     };
 
@@ -84,7 +83,6 @@ export function useChat(chatId: string | null) {
 
       let sessionToSave = { ...currentSession, messages: updatedMessages };
 
-      // Set title only if it's not already set
       if (updatedMessages.length > 0 && !sessionToSave.title) {
         const firstUserMessage = updatedMessages.find((m) => m.role === 'user');
         if (firstUserMessage) {
@@ -115,15 +113,18 @@ export function useChat(chatId: string | null) {
       isLoading: !!fileDataUri
     };
     
-    setMessages((prev) => [...prev, userMessage]);
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
 
     startTransition(async () => {
       let fileForAi: string | undefined = fileDataUri;
+      let finalMessages = newMessages;
 
       if (fileDataUri) {
-          const uploadResult = await uploadImageToServer(fileDataUri, user.id);
+          const uploadResult = await uploadImageToServer(fileDataUri);
           if (uploadResult.success && uploadResult.url) {
-            setMessages(prev => prev.map(msg => msg.id === userMessageId ? {...msg, isLoading: false, image_url: uploadResult.url} : msg));
+            finalMessages = finalMessages.map(msg => msg.id === userMessageId ? {...msg, isLoading: false, image_url: uploadResult.url} : msg);
+            setMessages(finalMessages);
           } else {
              toast({
                 title: 'Image Upload Failed',
@@ -136,38 +137,34 @@ export function useChat(chatId: string | null) {
       }
       
       const loadingMessageId = `${Date.now()}`;
-      setMessages((prev) => [...prev, { id: loadingMessageId, role: 'assistant', content: '...', userId: 'assistant' }]);
+      const loadingMessage: Message = { id: loadingMessageId, role: 'assistant', content: '...', userId: 'assistant' };
+      finalMessages = [...finalMessages, loadingMessage];
+      setMessages(finalMessages);
 
       try {
         const { aiStyle, aiModel } = settings;
         const systemInstruction = `Gaya AI: ${aiStyle}, Model AI: ${aiModel}.`;
         const queryWithInstruction = `${systemInstruction}\n\nPertanyaan: ${input}`;
-        let assistantMessage: Message;
+        let assistantMessage: Omit<Message, 'id' | 'role' | 'userId'>;
 
         if (mode === 'chat') {
           const result = await chat({ query: queryWithInstruction, file: fileForAi });
           assistantMessage = {
-            id: loadingMessageId,
-            role: 'assistant',
             content: result.response,
             type: 'text',
-            userId: 'assistant',
           };
         } else if (mode === 'search') {
           const result = await chatWithSearch({ query: queryWithInstruction, file: fileForAi });
           assistantMessage = {
-            id: loadingMessageId,
-            role: 'assistant',
             content: result.response,
             type: 'text',
             search_results: result.searchResults,
-            userId: 'assistant',
           };
         } else if (mode === 'image') {
           const result = await generateImage({ prompt: input });
-          const uploadResult = await uploadImageToServer(result.imageUrl, user.id);
+          const uploadResult = await uploadImageToServer(result.imageUrl);
           
-          let finalImageUrl = result.imageUrl; // fallback to data URI
+          let finalImageUrl = result.imageUrl; 
           if (uploadResult.success && uploadResult.url) {
             finalImageUrl = uploadResult.url;
           } else {
@@ -179,37 +176,33 @@ export function useChat(chatId: string | null) {
           }
 
           assistantMessage = {
-            id: loadingMessageId,
-            role: 'assistant',
             content: `Here is the image you requested for: "${input}"`,
             type: 'image',
             image_url: finalImageUrl,
-            userId: 'assistant',
           };
         } else {
           throw new Error(`Unknown mode: ${mode}`);
         }
         
-        // This is a safer way to update the loading message
-        setMessages((prev) => 
-            prev.map((msg) =>
-                msg.id === loadingMessageId ? assistantMessage : msg
-            )
+        const finalAssistantMessage: Message = {
+            id: loadingMessageId,
+            role: 'assistant',
+            userId: 'assistant',
+            ...assistantMessage
+        };
+
+        const finalMessagesWithResponse = finalMessages.map((msg) =>
+            msg.id === loadingMessageId ? finalAssistantMessage : msg
         );
+        setMessages(finalMessagesWithResponse);
         
-        // This is a safer way to save the session
-        setMessages((currentMessages) => {
-          handleSaveSession(currentMessages, session).then((savedSession) => {
-            if (savedSession) {
-              setSession(savedSession);
-              if (!chatId) {
-                // Navigate to the new chat URL without a full page reload
+        const savedSession = await handleSaveSession(finalMessagesWithResponse, session);
+        if (savedSession) {
+            setSession(savedSession);
+            if (!chatId) {
                 router.replace(`/?id=${savedSession.id}`, { scroll: false });
-              }
             }
-          });
-          return currentMessages;
-        });
+        }
 
       } catch (error: any) {
         console.error(error);
@@ -220,7 +213,8 @@ export function useChat(chatId: string | null) {
             userFriendlyMessage = 'Model AI sedang sibuk. Silakan coba lagi beberapa saat.';
         }
 
-        setMessages(prev => prev.map(msg => msg.id === loadingMessageId ? {...msg, content: userFriendlyMessage } : msg));
+        const finalMessagesWithError = finalMessages.map(msg => msg.id === loadingMessageId ? {...msg, content: userFriendlyMessage } : msg);
+        setMessages(finalMessagesWithError);
 
         toast({
           title: 'Error',
