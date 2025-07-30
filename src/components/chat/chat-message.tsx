@@ -56,8 +56,16 @@ const parseMessageContent = (content: string) => {
     }
     // Don't render empty strings
     if (!part) return null;
+    
+    // Basic markdown to HTML conversion
+    const htmlPart = part
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+      .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
+      .replace(/`(.*?)`/g, '<code>$1</code>') // Inline code
+      .replace(/\n/g, '<br />'); // New lines
+
     return (
-      <div key={index} className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: part.replace(/\n/g, '<br />') }} />
+      <div key={index} className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: htmlPart }} />
     );
   });
 };
@@ -149,7 +157,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
       )}
       <div
         className={cn(
-          'max-w-full md:max-w-xl rounded-lg p-4 space-y-2',
+          'max-w-full md:max-w-xl lg:max-w-2xl xl:max-w-3xl rounded-lg p-4 space-y-2',
           isUser
             ? 'bg-primary text-primary-foreground'
             : 'bg-card text-card-foreground shadow-sm'
