@@ -4,10 +4,12 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import bcrypt from 'bcryptjs';
 import { randomBytes } from 'crypto';
+import type { User, StoredUser } from './types';
+
 
 const dbPath = path.join(process.cwd(), 'src', 'data', 'users.json');
 
-async function readUsers() {
+async function readUsers(): Promise<StoredUser[]> {
   try {
     const data = await fs.readFile(dbPath, 'utf-8');
     return JSON.parse(data);
@@ -19,7 +21,7 @@ async function readUsers() {
   }
 }
 
-async function writeUsers(users: any[]) {
+async function writeUsers(users: StoredUser[]) {
   await fs.writeFile(dbPath, JSON.stringify(users, null, 2), 'utf-8');
 }
 
@@ -33,7 +35,7 @@ export async function registerUser({ name, email, password }: any) {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser = {
+  const newUser: StoredUser = {
     id: new Date().getTime().toString(),
     name,
     email,
@@ -48,7 +50,7 @@ export async function registerUser({ name, email, password }: any) {
   return { success: true, user: { name: newUser.name, email: newUser.email } };
 }
 
-export async function loginUser({ email, password }: any) {
+export async function loginUser({ email, password }: any): Promise<{success: boolean, message?: string, user?: User}> {
   const users = await readUsers();
   const user = users.find((u) => u.email === email);
 
@@ -83,7 +85,9 @@ export async function generatePasswordResetToken(email: string) {
     const userIndex = users.findIndex((u) => u.email === email);
 
     if (userIndex === -1) {
-        return { success: false, message: 'User not found.' };
+        // To prevent email enumeration, we send a success-like response
+        // even if the user doesn't exist.
+        return { success: true, token: null };
     }
 
     const resetToken = randomBytes(32).toString('hex');
@@ -101,7 +105,7 @@ export async function generatePasswordResetToken(email: string) {
 export async function resetPassword(token: string, newPassword: any) {
     const users = await readUsers();
     const userIndex = users.findIndex(
-        (u) => u.resetPasswordToken === token && u.resetPasswordExpires > Date.now()
+        (u) => u.resetPasswordToken === token && u.resetPasswordExpires && u.resetPasswordExpires > Date.now()
     );
 
     if (userIndex === -1) {
@@ -121,7 +125,7 @@ export async function resetPassword(token: string, newPassword: any) {
 export async function getUserByResetToken(token: string) {
     const users = await readUsers();
     const user = users.find(
-        (u) => u.resetPasswordToken === token && u.resetPasswordExpires > Date.now()
+        (u) => u.resetPasswordToken === token && u.resetPasswordExpires && u.resetPasswordExpires > Date.now()
     );
 
     if (!user) {

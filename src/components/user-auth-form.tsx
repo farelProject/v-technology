@@ -10,9 +10,10 @@ import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { registerUser, loginUser } from '@/lib/auth-service';
+import { useAuth } from '@/contexts/auth-context';
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
-  type: 'login' | 'register' | 'forgot-password';
+  type: 'login' | 'register';
 }
 
 export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
@@ -24,6 +25,7 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
 
   const { toast } = useToast();
   const router = useRouter();
+  const { login: authLogin } = useAuth();
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
@@ -31,13 +33,13 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
 
     if (type === 'login') {
       const result = await loginUser({ email, password });
-      if (result.success) {
+      if (result.success && result.user) {
+        authLogin(result.user); // Update auth context
         toast({
           title: 'Login Successful',
           description: 'Redirecting you to the main app...',
         });
         router.push('/');
-        router.refresh();
       } else {
         toast({
           title: 'Login Failed',
@@ -69,12 +71,6 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
           variant: 'destructive',
         });
       }
-    } else if (type === 'forgot-password') {
-      // This is a placeholder as email sending is not implemented
-      toast({
-        title: 'Feature Not Implemented',
-        description: 'Password reset functionality is not available in this local version.',
-      });
     }
 
     setIsLoading(false);
@@ -175,29 +171,10 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
     </>
   );
 
-  const renderForgotPasswordFields = () => (
-    <div className="grid gap-2">
-      <Label htmlFor="email">Email</Label>
-      <Input
-        id="email"
-        placeholder="name@example.com"
-        type="email"
-        autoCapitalize="none"
-        autoComplete="email"
-        autoCorrect="off"
-        disabled={isLoading}
-        required
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-    </div>
-  );
-
   const getTitle = () => {
     switch (type) {
       case 'login': return 'Sign In';
       case 'register': return 'Create Account';
-      case 'forgot-password': return 'Reset Password';
     }
   }
 
@@ -207,7 +184,6 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
         <div className="grid gap-4">
           {type === 'register' && renderRegisterFields()}
           {type === 'login' && renderLoginFields()}
-          {type === 'forgot-password' && renderForgotPasswordFields()}
 
           <Button disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -221,25 +197,24 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            {type === 'login' && "Or continue with"}
+            {type === 'login' && "Don't have an account?"}
             {type === 'register' && 'Already have an account?'}
-            {type === 'forgot-password' && 'Remembered your password?'}
           </span>
         </div>
       </div>
       {type === 'login' && (
-        <p className="px-8 text-center text-sm text-muted-foreground">
-          <Link href="/register" className="underline underline-offset-4 hover:text-primary">
-            Don't have an account? Sign Up
+        <Button variant="outline" asChild>
+          <Link href="/register">
+            Sign Up
           </Link>
-        </p>
+        </Button>
       )}
-      {(type === 'register' || type === 'forgot-password') && (
-        <p className="px-8 text-center text-sm text-muted-foreground">
-          <Link href="/login" className="underline underline-offset-4 hover:text-primary">
-            Sign In
-          </Link>
-        </p>
+      {type === 'register' && (
+         <Button variant="outline" asChild>
+            <Link href="/login">
+                Sign In
+            </Link>
+        </Button>
       )}
     </div>
   );

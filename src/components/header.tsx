@@ -11,6 +11,8 @@ import {
   Facebook,
   Linkedin,
   Menu,
+  LogOut,
+  LogIn,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -19,14 +21,17 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Sidebar } from './sidebar';
+import { useAuth } from '@/contexts/auth-context';
 
 export function Header() {
   const { toast } = useToast();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   const handleShare = (platform: 'twitter' | 'facebook' | 'linkedin' | 'copy') => {
     const url = window.location.href;
@@ -51,6 +56,11 @@ export function Header() {
     }
     window.open(shareUrl, '_blank', 'noopener,noreferrer');
   };
+  
+  const handleLogout = () => {
+      logout();
+      toast({title: 'Logged Out', description: 'You have been successfully logged out.'});
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -76,26 +86,6 @@ export function Header() {
           </Link>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
-          <nav className="hidden items-center space-x-2 sm:flex">
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/profile">
-                <User className="h-4 w-4" />
-                <span className="sr-only">Profile</span>
-              </Link>
-            </Button>
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/settings">
-                <Settings className="h-4 w-4" />
-                <span className="sr-only">Settings</span>
-              </Link>
-            </Button>
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/credits">
-                <CreditCard className="h-4 w-4" />
-                <span className="sr-only">Credits</span>
-              </Link>
-            </Button>
-          </nav>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -124,22 +114,34 @@ export function Header() {
           </DropdownMenu>
 
           <DropdownMenu>
-            <DropdownMenuTrigger asChild className="sm:hidden">
+            <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Settings className="h-4 w-4" />
                 <span className="sr-only">Menu</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem asChild>
-                 <Link href="/profile"><User className="mr-2 h-4 w-4" /> Profile</Link>
-              </DropdownMenuItem>
+            <DropdownMenuContent align="end">
+              {user && (
+                 <DropdownMenuItem asChild>
+                   <Link href="/profile"><User className="mr-2 h-4 w-4" /> Profile</Link>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem asChild>
                  <Link href="/settings"><Settings className="mr-2 h-4 w-4" /> Settings</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                  <Link href="/credits"><CreditCard className="mr-2 h-4 w-4" /> Credits</Link>
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              {user ? (
+                <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" /> Logout
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem asChild>
+                    <Link href="/login"><LogIn className="mr-2 h-4 w-4" /> Login</Link>
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
 

@@ -13,6 +13,7 @@ import {
 import type { AiMode } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '../ui/badge';
+import { useAuth } from '@/contexts/auth-context';
 
 interface ChatInputFormProps {
   onSend: (mode: AiMode, message: string, fileDataUri?: string) => void;
@@ -54,7 +55,19 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileDataUri, setFileDataUri] = useState<string | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
 
+  const handleAuthGuard = (featureName: string) => {
+      if (!user) {
+          toast({
+              title: 'Akses Ditolak',
+              description: `Anda harus login untuk menggunakan fitur ${featureName}.`,
+              variant: 'destructive'
+          });
+          return false;
+      }
+      return true;
+  }
 
   useEffect(() => {
     if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
@@ -87,6 +100,7 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
   };
   
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!handleAuthGuard('upload file')) return;
     const file = event.target.files?.[0];
     if (file) {
         if (!SUPPORTED_MIME_TYPES.includes(file.type)) {
@@ -125,6 +139,7 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
   };
 
   const handleUploadClick = () => {
+    if (!handleAuthGuard('upload file')) return;
     fileInputRef.current?.click();
   };
 
@@ -138,6 +153,9 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (mode !== 'chat' && !handleAuthGuard(`mode ${mode}`)) {
+      return;
+    }
     if (input.trim() || selectedFile) {
       onSend(mode, input, fileDataUri || undefined);
       setInput('');
@@ -151,6 +169,13 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
       handleSubmit(e as any);
     }
   };
+
+  const handleModeChange = (newMode: AiMode) => {
+    if (newMode !== 'chat' && !handleAuthGuard(`mode ${newMode}`)) {
+        return;
+    }
+    setMode(newMode);
+  }
   
   const CurrentModeIcon = modeConfig[mode].icon;
 
@@ -182,15 +207,15 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setMode('chat')}>
+              <DropdownMenuItem onClick={() => handleModeChange('chat')}>
                 <MessageSquare className="mr-2 h-4 w-4" />
                 <span>Chat</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setMode('image')}>
+              <DropdownMenuItem onClick={() => handleModeChange('image')}>
                 <ImageIcon className="mr-2 h-4 w-4" />
                 <span>Generate Image</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setMode('search')}>
+              <DropdownMenuItem onClick={() => handleModeChange('search')}>
                 <Search className="mr-2 h-4 w-4" />
                 <span>Search</span>
               </DropdownMenuItem>

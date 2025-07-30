@@ -16,3 +16,17 @@ export interface Settings {
   aiStyle: AiStyle;
   aiModel: AiModel;
 }
+
+// For client-side use, without sensitive data
+export interface User {
+  name: string;
+  email: string;
+}
+
+// Represents the full user object stored in the database
+export interface StoredUser extends User {
+    id: string;
+    password?: string; // Hashed password
+    resetPasswordToken?: string | null;
+    resetPasswordExpires?: number | null;
+}

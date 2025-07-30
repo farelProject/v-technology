@@ -13,7 +13,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,15 +28,30 @@ import {
 import { deleteUser } from '@/lib/auth-service';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { useAuth } from '@/contexts/auth-context';
 
 export default function ProfilePage() {
   const { toast } = useToast();
   const router = useRouter();
-  const [name, setName] = useState('Farel Alfareza');
-  const [email, setEmail] = useState('farel@vtech.ai');
+  const { user, logout, isLoading: isAuthLoading } = useAuth();
+  
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
 
+  useEffect(() => {
+    if (!isAuthLoading && !user) {
+      router.push('/login');
+    } else if (user) {
+      setName(user.name);
+      setEmail(user.email);
+    }
+  }, [user, isAuthLoading, router]);
+
+
   const handleSave = () => {
+    // In a real app with a proper DB, you would update the user info here.
+    // For now, we just show a toast as there's no persistence for name changes.
     toast({
       title: 'Profile Updated',
       description: 'Your information has been saved successfully.',
@@ -44,6 +59,7 @@ export default function ProfilePage() {
   };
 
   const handleDeleteAccount = async () => {
+    if (!email) return;
     setIsDeleting(true);
     const result = await deleteUser(email);
 
@@ -52,18 +68,26 @@ export default function ProfilePage() {
         title: 'Account Deleted',
         description: 'Your account has been permanently deleted.',
       });
-      // In a real app, you would also clear any local session/token
-      router.push('/login');
-      router.refresh();
+      logout(); // This will clear local storage and redirect
     } else {
       toast({
         title: 'Deletion Failed',
         description: result.message,
         variant: 'destructive',
       });
+      setIsDeleting(false);
     }
-    setIsDeleting(false);
   };
+  
+  if (isAuthLoading || !user) {
+      return (
+          <AppShell>
+              <div className="flex h-full w-full items-center justify-center">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+              </div>
+          </AppShell>
+      )
+  }
 
   return (
     <AppShell>
