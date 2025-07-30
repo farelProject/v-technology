@@ -122,16 +122,24 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
   const handleDownload = async (url: string) => {
     try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const objectUrl = window.URL.createObjectURL(blob);
+      // For local URLs, we can just link to them. For data URIs, we need conversion.
+      const isDataUrl = url.startsWith('data:');
       const a = document.createElement('a');
-      a.href = objectUrl;
+      a.href = url;
       a.download = `vtech-image-${Date.now()}.png`;
+
+      if (!isDataUrl) {
+          // If it's a regular URL, it needs to be fetched to be downloadable with a custom name
+          // This can be blocked by CORS, so a direct link is often better.
+          // For simplicity, we'll just open it in a new tab. Forcing download is complex with CORS.
+          window.open(url, '_blank');
+          toast({ title: 'Opening image in new tab...' });
+          return;
+      }
+      
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      window.URL.revokeObjectURL(objectUrl);
       toast({ title: 'Image download started!' });
     } catch (error) {
       console.error('Download failed:', error);
@@ -142,15 +150,6 @@ export function ChatMessage({ message }: ChatMessageProps) {
       });
     }
   };
-
-  const isGeneratedImageUrl = (url?: string): url is string => {
-    return !!url && url.startsWith('data:image/png;base64,');
-  };
-  
-  const isUploadedFileUrl = (url?: string): url is string => {
-      // Any non-data URI is now considered a remote URL from ImgBB
-      return !!url && !url.startsWith('data:');
-  }
   
   const messageVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -167,9 +166,16 @@ export function ChatMessage({ message }: ChatMessageProps) {
 
   return wrapper(
     <div className={cn('flex items-start space-x-4', isUser && 'justify-end')}>
+      {isAssistant && (
+         <Avatar className="h-8 w-8">
+            <AvatarFallback>
+                <VTechIcon className="h-5 w-5" />
+            </AvatarFallback>
+        </Avatar>
+      )}
       <div
         className={cn(
-          'max-w-full rounded-lg p-4 space-y-2 w-full',
+          'max-w-full rounded-lg p-4 space-y-2 w-fit',
           isUser
             ? 'bg-primary text-primary-foreground'
             : 'bg-card text-card-foreground shadow-sm'
@@ -186,12 +192,8 @@ export function ChatMessage({ message }: ChatMessageProps) {
             </div>
         )}
 
-        {isUser && message.image_url && (isUploadedFileUrl(message.image_url) || isGeneratedImageUrl(message.image_url)) && (
-            <ImageDisplay src={message.image_url} alt="Uploaded content" />
-        )}
-        
-        {isAssistant && isGeneratedImageUrl(message.image_url) && (
-          <ImageDisplay src={message.image_url} alt={message.content || 'Generated image'} />
+        {message.image_url && (
+            <ImageDisplay src={message.image_url} alt="Uploaded or generated content" />
         )}
 
         {message.search_results && message.search_results.length > 0 && (
@@ -239,7 +241,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
               <Copy className="h-4 w-4" />
               <span className="sr-only">Copy message</span>
             </Button>
-            {isGeneratedImageUrl(message.image_url) && (
+            {message.image_url && (
               <Button
                 variant="ghost"
                 size="icon"
