@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import { useToast } from './use-toast';
 import { chatWithSearch } from '@/ai/flows/chat-with-search';
 import { generateImage } from '@/ai/flows/generate-image';
+import { chat } from '@/ai/flows/chat';
 import type { Message, AiMode } from '@/lib/types';
 import { useSettings } from '@/contexts/settings-context';
 
@@ -33,39 +34,45 @@ export function useChat() {
 
     startTransition(async () => {
       try {
-        if (mode === 'chat' || mode === 'search') {
-          const { aiStyle, aiModel } = settings;
-          let systemInstruction = `Gaya AI: ${aiStyle}, Model AI: ${aiModel}.`;
-          if (mode === 'search') {
-            systemInstruction += ' Selalu gunakan webSearch tool.';
-          }
-          const queryWithInstruction = `${systemInstruction}\n\nPertanyaan: ${input}`;
-          
+        const { aiStyle, aiModel } = settings;
+        const systemInstruction = `Gaya AI: ${aiStyle}, Model AI: ${aiModel}.`;
+        const queryWithInstruction = `${systemInstruction}\n\nPertanyaan: ${input}`;
+        let assistantMessage: Message;
+
+        if (mode === 'chat') {
+           const result = await chat({ query: queryWithInstruction, file: fileDataUri });
+           assistantMessage = {
+             id: loadingMessage.id,
+             role: 'assistant',
+             content: result.response,
+             type: 'text',
+           };
+        } else if (mode === 'search') {
           const result = await chatWithSearch({ query: queryWithInstruction, file: fileDataUri });
-          
-          const assistantMessage: Message = {
+          assistantMessage = {
             id: loadingMessage.id,
             role: 'assistant',
             content: result.response,
             type: 'text',
             search_results: result.searchResults
           };
-          setMessages((prev) =>
-            prev.map((m) => (m.id === loadingMessage.id ? assistantMessage : m))
-          );
         } else if (mode === 'image') {
           const result = await generateImage({ prompt: input });
-          const assistantMessage: Message = {
+          assistantMessage = {
             id: loadingMessage.id,
             role: 'assistant',
             content: `Here is the image you requested for: "${input}"`,
             type: 'image',
             image_url: result.imageUrl,
           };
-          setMessages((prev) =>
-            prev.map((m) => (m.id === loadingMessage.id ? assistantMessage : m))
-          );
+        } else {
+            throw new Error(`Unknown mode: ${mode}`);
         }
+        
+        setMessages((prev) =>
+            prev.map((m) => (m.id === loadingMessage.id ? assistantMessage : m))
+        );
+
       } catch (error) {
         console.error(error);
         toast({
