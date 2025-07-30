@@ -1,15 +1,1 @@
-[
-  {
-    "id": "1753888737578",
-    "name": "Farel Alfareza",
-    "email": "farproject.studio@gmail.com",
-    "password": "$2a$10$EOYPpTaGL1yS6RQEfOBoVOXbWSZxaCOgLQCyYRcPDgUIFXV7unyze",
-    "resetPasswordToken": null,
-    "resetPasswordExpires": null,
-    "chatLimit": {
-      "count": 26,
-      "limit": 100,
-      "lastReset": "2025-07-30T15:18:57.578Z"
-    }
-  }
-]
+[]
