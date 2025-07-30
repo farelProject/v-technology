@@ -100,7 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('vtech-user');
     setUser(null);
     setChatLimit(getInitialGuestLimit());
-    router.push('/login');
+    router.push('/');
     router.refresh(); // Forces a refresh to clear state
   }, [router]);
 

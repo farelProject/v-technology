@@ -2,7 +2,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Home, MessageSquare, Heart, Info, LogIn, User, LogOut, PlusSquare, History, KeyRound } from 'lucide-react';
+import { Home, MessageSquare, Heart, Info, LogIn, User, LogOut, PlusSquare, History } from 'lucide-react';
 import { ScrollArea } from './ui/scroll-area';
 import { useAuth } from '@/contexts/auth-context';
 import { useToast } from '@/hooks/use-toast';
@@ -38,7 +38,7 @@ export function Sidebar({ onLinkClick }: SidebarProps) {
         <nav className="flex flex-col space-y-1 px-2 py-4">
             {user && (
                 <>
-                    <Link href="/" passHref>
+                    <Link href="/chat" passHref>
                         <Button variant="ghost" className="w-full justify-start" onClick={handleLinkClick}>
                             <PlusSquare className="mr-3 h-5 w-5" />
                             New Chat
@@ -87,6 +87,13 @@ export function Sidebar({ onLinkClick }: SidebarProps) {
                     Donate
                  </Button>
             </Link>
+            <Link href="/password-generator" passHref>
+                <Button variant="ghost" className="w-full justify-start" onClick={handleLinkClick}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-3 h-5 w-5"><path d="m14.5 10.5 5-5"/><path d="m21 3-5 5"/><path d="M7 14a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/><path d="M11 18a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/><path d="M15 22a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/><path d="M18 8a2 2 0 1 0-4 0 2 2 0 0 0 4 0Z"/></svg>
+                    Password Generator
+                </Button>
+            </Link>
+
 
              {!user ? (
                 <Link href="/login" passHref>

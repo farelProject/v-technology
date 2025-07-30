@@ -1,3 +1,4 @@
+
 'use client';
 
 import * as React from 'react';
@@ -41,7 +42,7 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
           title: 'Login Successful',
           description: 'Redirecting you to the main app...',
         });
-        router.push('/');
+        router.push('/chat');
       } else {
         toast({
           title: 'Login Failed',

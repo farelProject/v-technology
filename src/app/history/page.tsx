@@ -1,3 +1,4 @@
+
 'use client';
 
 import { AppShell } from '@/components/app-shell';
@@ -102,7 +103,7 @@ export default function HistoryPage() {
                       </div>
                       <div className='flex items-center space-x-2'>
                         <Button asChild>
-                           <Link href={`/?id=${session.id}`}>Continue</Link>
+                           <Link href={`/chat?id=${session.id}`}>Continue</Link>
                         </Button>
                         <AlertDialog>
                             <AlertDialogTrigger asChild>

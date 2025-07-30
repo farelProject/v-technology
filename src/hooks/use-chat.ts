@@ -77,7 +77,7 @@ export function useChat(chatId: string | null) {
       } else { // If user is a guest
         // If a chatId is in the URL, clear it because guests can't access saved chats.
         if (chatId) {
-            router.replace('/');
+            router.replace('/chat');
         }
         // Create a temporary in-memory session for the guest.
         const guestSession = await createNewChatSession('guest');
@@ -252,7 +252,7 @@ export function useChat(chatId: string | null) {
               setSession(savedSession);
               // If this was a new chat, update URL to include the new session ID
               if (!chatId) {
-                  router.replace(`/?id=${savedSession.id}`, { scroll: false });
+                  router.replace(`/chat?id=${savedSession.id}`, { scroll: false });
               }
           }
         }
