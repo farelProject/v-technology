@@ -56,24 +56,38 @@ export function useChat(chatId: string | null) {
   useEffect(() => {
     // Session loading is now handled based on user state change.
     const loadSession = async () => {
-      if (chatId && user) { // Only load session if there's a user
-        const loadedSession = await getChatSession(user.id, chatId);
-        if (loadedSession) {
-          setSession(loadedSession);
-          setMessages(loadedSession.messages);
-        } else {
-          toast({ title: 'Chat not found', variant: 'destructive' });
-          router.push('/');
+      // If user is logged in, try to load the specified chat or create a new one for them.
+      if (user) {
+        const sessionId = chatId || new Date().getTime().toString();
+        let loadedSession = chatId ? await getChatSession(user.id, chatId) : null;
+        
+        if (!loadedSession) {
+            loadedSession = {
+                id: sessionId,
+                userId: user.id,
+                title: '',
+                timestamp: new Date().toISOString(),
+                messages: [],
+            };
         }
-      } else {
-        const newSession = await createNewChatSession(userId);
-        setSession(newSession);
-        setMessages(newSession.messages);
+        
+        setSession(loadedSession);
+        setMessages(loadedSession.messages);
+
+      } else { // If user is a guest
+        // If a chatId is in the URL, clear it because guests can't access saved chats.
+        if (chatId) {
+            router.replace('/');
+        }
+        // Create a temporary in-memory session for the guest.
+        const guestSession = await createNewChatSession('guest');
+        setSession(guestSession);
+        setMessages(guestSession.messages);
       }
     };
 
     loadSession();
-  }, [chatId, user, router, toast]); // Rerun when user changes (login/logout)
+  }, [chatId, user, router, toast]);
 
 
   const handleSaveSession = useCallback(
@@ -96,28 +110,16 @@ export function useChat(chatId: string | null) {
   );
 
   const handleSend = (mode: AiMode, input: string, fileDataUri?: string) => {
-    if (!input.trim() && !fileDataUri) return;
-    if (!session) return;
-    if (!chatLimit) return;
+    if ((!input.trim() && !fileDataUri) || !session) return;
 
-    // Guest restrictions
-    if (!user && (mode === 'image' || mode === 'search' || !!fileDataUri)) {
-        toast({
-            title: 'Feature Locked',
-            description: 'Please log in to use image generation, search, and file uploads.',
-            variant: 'destructive',
-        });
-        return;
-    }
-
-    // Check limits
-    if (chatLimit.count >= chatLimit.limit) {
-        toast({
+    // Check for chat limit first
+    if (chatLimit && chatLimit.count >= chatLimit.limit) {
+      toast({
             title: 'Chat Limit Reached',
             description: user ? 'Your daily limit will reset in 24 hours.' : 'Please log in to continue chatting.',
             variant: 'destructive',
         });
-        return;
+      return;
     }
 
     const userMessage: Message = {
@@ -165,12 +167,15 @@ export function useChat(chatId: string | null) {
         if(user) {
             newLimit = await getAndUpdateChatLimit(user.id);
         } else {
-            newLimit = { count: chatLimit.count + 1, limit: chatLimit.limit };
-            updateChatLimit({ count: newLimit.count });
+            // This can't be null for guests, but we check to be safe
+            if (chatLimit) {
+                newLimit = { count: chatLimit.count + 1, limit: chatLimit.limit };
+                updateChatLimit({ count: newLimit.count });
+            }
         }
 
         if (!newLimit || newLimit.count > newLimit.limit) {
-             setMessages(messages.filter(m => m.id !== loadingMessageId));
+             setMessages(currentMessages); // Revert to messages before loading indicator
              toast({
                 title: 'Chat Limit Reached',
                 description: user ? 'Your daily limit will reset in 24 hours.' : 'Please log in to continue chatting.',
@@ -180,7 +185,7 @@ export function useChat(chatId: string | null) {
         }
 
         // Show warning if limit is low
-        if (newLimit.limit - newLimit.count <= 2 && newLimit.limit - newLimit.count > 0) {
+        if (newLimit.limit > 0 && newLimit.limit - newLimit.count <= 2 && newLimit.limit - newLimit.count > 0) {
             toast({
                 title: 'Limit Warning',
                 description: `You have ${newLimit.limit - newLimit.count} messages left.`
@@ -239,20 +244,23 @@ export function useChat(chatId: string | null) {
         const finalMessages = [...currentMessages, finalAssistantMessage];
         setMessages(finalMessages);
         
-        const savedSession = await handleSaveSession(finalMessages, session);
-        if (savedSession) {
-            setSession(savedSession);
-            if (!chatId && user) {
-                router.replace(`/?id=${savedSession.id}`, { scroll: false });
-            }
+        // Only save session if the user is logged in
+        if (user) {
+          const savedSession = await handleSaveSession(finalMessages, session);
+          if (savedSession) {
+              setSession(savedSession);
+              // If this was a new chat, update URL to include the new session ID
+              if (!chatId) {
+                  router.replace(`/?id=${savedSession.id}`, { scroll: false });
+              }
+          }
         }
 
       } catch (error: any) {
         console.error(error);
-        const errorMessage = error.message || 'Failed to get a response from the AI.';
         let userFriendlyMessage = 'Failed to get a response from the AI. Please try again.';
         
-        if (errorMessage.includes('overloaded')) {
+        if (error.message?.includes('overloaded')) {
             userFriendlyMessage = 'The AI model is currently busy. Please try again in a few moments.';
         }
 

@@ -1,4 +1,3 @@
-
 [
   {
     "id": "1753853813182",
@@ -8,9 +7,9 @@
     "resetPasswordToken": null,
     "resetPasswordExpires": null,
     "chatLimit": {
-      "count": 0,
+      "count": 2,
       "limit": 100,
-      "lastReset": "2023-01-01T00:00:00.000Z"
+      "lastReset": "2025-07-30T14:50:24.545Z"
     }
   }
 ]
