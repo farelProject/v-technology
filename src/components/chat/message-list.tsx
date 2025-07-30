@@ -33,7 +33,7 @@ export function MessageList({
     onSend('chat', question);
   };
 
-  const showSuggestions = messages.length === 0 && !isLoading && isNewChat && user;
+  const showSuggestions = messages && messages.length === 0 && !isLoading && isNewChat && user;
 
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8">
@@ -41,7 +41,7 @@ export function MessageList({
         <SuggestedQuestions onQuestionClick={handleQuestionClick} />
       )}
       <div className="space-y-6">
-        {messages.map((msg) => (
+        {messages && messages.map((msg) => (
           <ChatMessage key={msg.id} message={msg} />
         ))}
       </div>
