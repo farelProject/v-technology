@@ -69,7 +69,7 @@ export function useChat(chatId: string | null) {
           }
         });
       } else {
-        const newSession = createNewChatSession(user.id);
+        const newSession = await createNewChatSession(user.id);
         setSession(newSession);
         setMessages(newSession.messages);
       }
@@ -195,7 +195,7 @@ export function useChat(chatId: string | null) {
           ...assistantResponse,
           id: loadingMessageId,
           role: 'assistant',
-          userId: user.id
+          userId: 'assistant'
         });
         
         setMessages((currentMessages) => {
