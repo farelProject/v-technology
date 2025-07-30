@@ -122,36 +122,33 @@ export function useChat(chatId: string | null) {
       userId: user.id
     };
     
-    // Immediately add user message to the UI
     setMessages((prev) => [...prev, userMessage]);
 
-    // Process the rest in the background
     startTransition(async () => {
       let uploadedImageUrl: string | undefined = undefined;
-      let fileForAi: string | undefined = undefined;
+      let fileForAi: string | undefined = fileDataUri;
 
       if (fileDataUri) {
-        const uploadResult = await uploadImageToServer(fileDataUri, user.id);
-        if (uploadResult.success && uploadResult.url) {
-          uploadedImageUrl = uploadResult.url;
-          fileForAi = uploadResult.url;
-          updateMessage(userMessageId, {
-            isLoading: false,
-            image_url: uploadedImageUrl,
-          });
-        } else {
-          toast({
-            title: 'Image Upload Failed',
-            description: uploadResult.error || 'Could not upload your image.',
-            variant: 'destructive',
-          });
-          setMessages((prev) => prev.filter((msg) => msg.id !== userMessageId));
-          return;
-        }
+          const uploadResult = await uploadImageToServer(fileDataUri, user.id);
+          if (uploadResult.success && uploadResult.url) {
+            uploadedImageUrl = uploadResult.url;
+            updateMessage(userMessageId, {
+              isLoading: false,
+              image_url: uploadedImageUrl,
+            });
+          } else {
+             toast({
+                title: 'Image Upload Failed',
+                description: uploadResult.error || 'Could not upload your image.',
+                variant: 'destructive',
+            });
+            setMessages((prev) => prev.filter((msg) => msg.id !== userMessageId));
+            return;
+          }
       }
       
       const loadingMessageId = `${Date.now()}`;
-      setMessages((prev) => [...prev, { id: loadingMessageId, role: 'assistant', content: '...' }]);
+      setMessages((prev) => [...prev, { id: loadingMessageId, role: 'assistant', content: '...', userId: user.id }]);
 
       try {
         const { aiStyle, aiModel } = settings;
@@ -198,6 +195,7 @@ export function useChat(chatId: string | null) {
           ...assistantResponse,
           id: loadingMessageId,
           role: 'assistant',
+          userId: user.id
         });
         
         setMessages((currentMessages) => {
@@ -215,14 +213,22 @@ export function useChat(chatId: string | null) {
 
       } catch (error: any) {
         console.error(error);
+        const errorMessage = error.message || 'Gagal mendapatkan respons dari AI.';
+        let userFriendlyMessage = 'Gagal mendapatkan respons dari AI. Silakan coba lagi.';
+        
+        if (errorMessage.includes('overloaded')) {
+            userFriendlyMessage = 'Model AI sedang sibuk. Silakan coba lagi beberapa saat.';
+        }
+
         updateMessage(loadingMessageId, {
-          content: 'Gagal mendapatkan respons dari AI. Silakan coba lagi.',
+          content: userFriendlyMessage,
           id: loadingMessageId,
           role: 'assistant',
+          userId: user.id
         });
         toast({
           title: 'Error',
-          description: error.message || 'Failed to get response from AI.',
+          description: userFriendlyMessage,
           variant: 'destructive',
         });
       }
