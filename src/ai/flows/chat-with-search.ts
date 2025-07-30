@@ -5,46 +5,77 @@ import {z} from 'genkit';
 
 const ChatWithSearchInputSchema = z.object({
   query: z.string().describe('The user query.'),
-  file: z.string().optional().describe( "A file, if provided by the user, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."),
+  file: z
+    .string()
+    .optional()
+    .describe(
+      "A file, if provided by the user, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+    ),
 });
 export type ChatWithSearchInput = z.infer<typeof ChatWithSearchInputSchema>;
 
 const SearchResultItemSchema = z.object({
   title: z.string(),
-  description: z.string().describe('AI-generated description for the search result.'),
+  description: z
+    .string()
+    .describe('AI-generated description for the search result.'),
   link: z.string().url(),
 });
 
 const ChatWithSearchOutputSchema = z.object({
-  response: z.string().describe('A brief, one-sentence introductory response from the AI. This can include markdown, including code blocks.'),
+  response: z
+    .string()
+    .describe(
+      'A brief, one-sentence introductory response from the AI. This can include markdown, including code blocks.'
+    ),
   searchResults: z.array(SearchResultItemSchema).optional(),
 });
 export type ChatWithSearchOutput = z.infer<typeof ChatWithSearchOutputSchema>;
 
-export async function chatWithSearch(input: ChatWithSearchInput): Promise<ChatWithSearchOutput> {
+export async function chatWithSearch(
+  input: ChatWithSearchInput
+): Promise<ChatWithSearchOutput> {
   return chatWithSearchFlow(input);
 }
 
-const webSearch = ai.defineTool({
-  name: 'webSearch',
-  description: 'Searches the web for relevant information.',
-  inputSchema: z.object({
-    query: z.string().describe('The search query.'),
-  }),
-  outputSchema: z.array(z.object({
-    title: z.string(),
-    link: z.string().url(),
-    // The websearch tool no longer provides its own description.
-  })),
-},
-async (input) => {
+const webSearch = ai.defineTool(
+  {
+    name: 'webSearch',
+    description: 'Searches the web for relevant information.',
+    inputSchema: z.object({
+      query: z.string().describe('The search query.'),
+    }),
+    outputSchema: z.array(
+      z.object({
+        title: z.string(),
+        link: z.string().url(),
+        // The websearch tool no longer provides its own description.
+      })
+    ),
+  },
+  async (input) => {
     // Placeholder for web search implementation.
     return [
-      { title: 'Dummy Search Result 1', link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 1')}` },
-      { title: 'Dummy Search Result 2', link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 2')}` },
-      { title: 'Dummy Search Result 3', link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 3')}` },
-      { title: 'Dummy Search Result 4', link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 4')}` },
-      { title: 'Dummy Search Result 5', link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 5')}` },
+      {
+        title: `Google: ${input.query}`,
+        link: `https://google.com/search?q=${encodeURIComponent(input.query)}`,
+      },
+      {
+        title: `Bing: ${input.query}`,
+        link: `https://bing.com/search?q=${encodeURIComponent(input.query)}`,
+      },
+      {
+        title: `DuckDuckGo: ${input.query}`,
+        link: `https://duckduckgo.com/?q=${encodeURIComponent(input.query)}`,
+      },
+      {
+        title: `Wikipedia: ${input.query}`,
+        link: `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(input.query)}`,
+      },
+      {
+        title: `Yahoo: ${input.query}`,
+        link: `https://search.yahoo.com/search?p=${encodeURIComponent(input.query)}`,
+      },
     ];
   }
 );
@@ -69,7 +100,6 @@ const chatWithSearchPrompt = ai.definePrompt({
 {{query}}`,
 });
 
-
 const chatWithSearchFlow = ai.defineFlow(
   {
     name: 'chatWithSearchFlow',
@@ -85,10 +115,14 @@ const chatWithSearchFlow = ai.defineFlow(
     }
 
     // Fallback if the model fails to return structured JSON
-    console.error("AI did not return valid JSON output. Using fallback.", llmResponse.text);
+    console.error(
+      'AI did not return valid JSON output. Using fallback.',
+      llmResponse.text
+    );
     return {
-        response: "I'm sorry, I encountered an error while processing the search results. Please try again.",
-        searchResults: [],
+      response:
+        "I'm sorry, I encountered an error while processing the search results. Please try again.",
+      searchResults: [],
     };
   }
 );
