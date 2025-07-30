@@ -105,7 +105,7 @@ const chatWithSearchFlow = ai.defineFlow(
       if (output) {
         parsedResponse = output;
       } else {
-        const jsonResponse = JSON.parse(llmResponse.text);
+        const jsonResponse = JSON.parse(llmResponse.text ?? '{}');
         parsedResponse = ChatWithSearchOutputSchema.parse(jsonResponse);
       }
     } catch (e) {
