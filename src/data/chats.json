@@ -97,6 +97,129 @@
           "content": "Here is the image you requested for: \"Moon\"",
           "type": "image",
           "image_url": "/uploads/12baec99-bc66-46b6-8e15-2f26cea51aeb.png"
+        },
+        {
+          "id": "1753884141726-0.5389201021078271",
+          "role": "user",
+          "content": "Halo",
+          "isLoading": false
+        },
+        {
+          "id": "1753884141728",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Halo! Ada yang bisa saya bantu?",
+          "type": "text"
+        },
+        {
+          "id": "1753884156703-0.23960722800479284",
+          "role": "user",
+          "content": "Apa itu bulan",
+          "isLoading": false
+        },
+        {
+          "id": "1753884156703",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Here are the search results for your query about the moon.",
+          "type": "text",
+          "search_results": [
+            {
+              "title": "Moon facts | Royal Museums Greenwich",
+              "description": "Discover interesting facts about the Moon, including its formation, orbit, phases, and its influence on Earth's tides. Learn about past and future lunar eclipses and the Moon's role in inspiring art and culture.",
+              "link": "https://www.rmg.co.uk/stories/topics/moon-facts"
+            },
+            {
+              "title": "Moon - Wikipedia",
+              "description": "The Moon is Earth's only natural satellite, orbiting the planet and influencing tides. It is the fifth-largest moon in the Solar System, and the largest and most massive relative to its parent planet. Its surface is heavily cratered and features maria, or dark volcanic plains.",
+              "link": "https://en.wikipedia.org/wiki/Moon"
+            },
+            {
+              "title": "The Moon: NASA Science",
+              "description": "Explore NASA's comprehensive information about the Moon, including its formation, composition, exploration, and its relationship with Earth. Stay updated with the latest discoveries, missions, and images related to lunar science.",
+              "link": "https://science.nasa.gov/moon/"
+            },
+            {
+              "title": "Full Moon Names and Their Meanings - Farmers' Almanac",
+              "description": "Explore the traditional names given to each full moon throughout the year, often originating from Native American, Colonial American, and European folklore. Each name reflects the seasonal activities or natural events occurring at the time of the full moon.",
+              "link": "https://www.farmersalmanac.com/full-moon-names"
+            },
+            {
+              "title": "Earth's Moon | Planets – NASA Solar System Exploration",
+              "description": "This page provides an overview of Earth's Moon, detailing its key features, scientific importance, and exploration efforts. It covers topics such as the Moon's structure, orbit, and its relationship to Earth.",
+              "link": "https://solarsystem.nasa.gov/planets/earth/moons/"
+            }
+          ]
+        },
+        {
+          "id": "1753884189395-0.9920875175619415",
+          "role": "user",
+          "content": "Apa ini? ",
+          "isLoading": false,
+          "image_url": "/uploads/ffba9bc5-8538-4ddb-bc83-f38557437aea.png"
+        },
+        {
+          "id": "1753884190645",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "The image shows a Dockerfile failing to build because it can't find the Release file for the Debian buster repository and the apt-get update command fails, resulting in an exit code of 100.",
+          "type": "text",
+          "search_results": []
+        },
+        {
+          "id": "1753884216877-0.6884950925282434",
+          "role": "user",
+          "content": "Bisa bahasa indonesia? ",
+          "isLoading": false
+        },
+        {
+          "id": "1753884216877",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Saya bisa berbahasa Indonesia.",
+          "type": "text",
+          "search_results": []
+        },
+        {
+          "id": "1753884229657-0.1018640211179912",
+          "role": "user",
+          "content": "Kenapa ini?? ",
+          "isLoading": false,
+          "image_url": "/uploads/fb519322-2418-4a93-bd53-cdd91c5e56f1.png"
+        },
+        {
+          "id": "1753884230948",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "The error indicates that the Debian 'buster' repository is missing a Release file, and the Docker build process failed during the `apt-get update` and installation steps.",
+          "type": "text",
+          "search_results": [
+            {
+              "title": "How to fix apt-get update issues on Debian Buster - YouTube",
+              "description": "This video explains how to troubleshoot issues with `apt-get update` on Debian Buster, likely caused by repository problems.",
+              "link": "https://www.youtube.com/watch?v=K2jhQ0ElRK0"
+            },
+            {
+              "title": "debian - apt-get update fails to fetch Release file - Stack Overflow",
+              "description": "This Stack Overflow thread discusses potential solutions for when `apt-get update` fails to fetch the Release file, including checking the sources list and network connectivity.",
+              "link": "https://stackoverflow.com/questions/30468388/apt-get-update-fails-to-fetch-release-file"
+            },
+            {
+              "title": "Package Repositories - Debian Wiki",
+              "description": "The Debian Wiki page on package repositories describes how to configure the `/etc/apt/sources.list` file, which is important for resolving repository issues.",
+              "link": "https://wiki.debian.org/SourcesList"
+            },
+            {
+              "title": "Fixing \"GPG error NO_PUBKEY\" when running apt-get update - LinuxBabe.com",
+              "description": "This article describes how to fix the \"GPG error NO_PUBKEY\" that can occur when running apt-get update, which can sometimes be related to repository issues.",
+              "link": "https://www.linuxbabe.com/ubuntu/fix-gpg-error-no_pubkey-apt-get-update"
+            },
+            {
+              "title": "How To Fix \"The following signatures couldn't be verified because the public key is not available\" Error - MakeUseOf",
+              "description": "This MakeUseOf article explains how to fix errors related to missing public keys that can prevent package updates.",
+              "link": "https://www.makeuseof.com/fix-the-following-signatures-couldnt-be-verified-because-the-public-key-is-not-available-error/"
+            }
+          ]
         }
       ]
     }

@@ -115,20 +115,26 @@ export function useChat(chatId: string | null) {
     setMessages((prev) => [...prev, userMessage]);
 
     startTransition(async () => {
-      let finalMessages = [...messages, userMessage];
+      let currentMessages = [...messages, userMessage];
       let fileForAi: string | undefined = fileDataUri;
 
       if (fileDataUri) {
           const uploadResult = await uploadImageToServer(fileDataUri);
           if (uploadResult.success && uploadResult.url) {
-            finalMessages = finalMessages.map(msg => msg.id === userMessage.id ? {...msg, isLoading: false, image_url: uploadResult.url} : msg);
-            setMessages(finalMessages);
+            // Update the user message to include the image_url and set isLoading to false
+            currentMessages = currentMessages.map(msg => 
+              msg.id === userMessage.id 
+                ? {...msg, isLoading: false, image_url: uploadResult.url} 
+                : msg
+            );
+            setMessages(currentMessages);
           } else {
              toast({
                 title: 'Image Upload Failed',
                 description: uploadResult.error || 'Could not upload your image.',
                 variant: 'destructive',
             });
+            // Remove the message that failed to upload
             setMessages((prev) => prev.filter((msg) => msg.id !== userMessage.id));
             return;
           }
@@ -136,24 +142,24 @@ export function useChat(chatId: string | null) {
       
       const loadingMessageId = `${Date.now()}`;
       const loadingMessage: Message = { id: loadingMessageId, role: 'assistant', content: '...', userId: 'assistant' };
-      finalMessages.push(loadingMessage);
-      setMessages(finalMessages);
+      
+      setMessages([...currentMessages, loadingMessage]);
 
       try {
         const { aiStyle, aiModel } = settings;
         const systemInstruction = `Gaya AI: ${aiStyle}, Model AI: ${aiModel}.`;
         const queryWithInstruction = `${systemInstruction}\n\nPertanyaan: ${input}`;
-        let assistantResponse: Omit<Message, 'id' | 'role' | 'userId'>;
+        let assistantResponsePayload: Omit<Message, 'id' | 'role' | 'userId'>;
 
         if (mode === 'chat') {
           const result = await chat({ query: queryWithInstruction, file: fileForAi });
-          assistantResponse = {
+          assistantResponsePayload = {
             content: result.response,
             type: 'text',
           };
         } else if (mode === 'search') {
           const result = await chatWithSearch({ query: queryWithInstruction, file: fileForAi });
-          assistantResponse = {
+          assistantResponsePayload = {
             content: result.response,
             type: 'text',
             search_results: result.searchResults,
@@ -173,7 +179,7 @@ export function useChat(chatId: string | null) {
             });
           }
 
-          assistantResponse = {
+          assistantResponsePayload = {
             content: `Here is the image you requested for: "${input}"`,
             type: 'image',
             image_url: finalImageUrl,
@@ -186,15 +192,13 @@ export function useChat(chatId: string | null) {
             id: loadingMessageId,
             role: 'assistant',
             userId: 'assistant',
-            ...assistantResponse
+            ...assistantResponsePayload
         };
 
-        const finalMessagesWithResponse = finalMessages.map((msg) =>
-            msg.id === loadingMessageId ? finalAssistantMessage : msg
-        );
-        setMessages(finalMessagesWithResponse);
+        const finalMessages = [...currentMessages, finalAssistantMessage];
+        setMessages(finalMessages);
         
-        const savedSession = await handleSaveSession(finalMessagesWithResponse, session);
+        const savedSession = await handleSaveSession(finalMessages, session);
         if (savedSession) {
             setSession(savedSession);
             if (!chatId) {
@@ -211,8 +215,14 @@ export function useChat(chatId: string | null) {
             userFriendlyMessage = 'Model AI sedang sibuk. Silakan coba lagi beberapa saat.';
         }
 
-        const finalMessagesWithError = finalMessages.map(msg => msg.id === loadingMessageId ? {...msg, content: userFriendlyMessage } : msg);
-        setMessages(finalMessagesWithError);
+        const finalAssistantMessage: Message = {
+            id: loadingMessageId,
+            role: 'assistant',
+            userId: 'assistant',
+            content: userFriendlyMessage,
+        };
+
+        setMessages([...currentMessages, finalAssistantMessage]);
 
         toast({
           title: 'Error',

@@ -45,7 +45,7 @@ const chatPrompt = ai.definePrompt({
 - You are a helpful assistant.
 - You should be able to generate code snippets when asked. Use markdown for code blocks.
 - When you generate code, you MUST provide a clear and concise explanation for what the code does.
-- If the user provides a file, you should analyze it.
+- If the user provides a file (image), you MUST analyze the image in conjunction with the user's text query to understand their full intent. Your response must be based on both the image and the text.
 - Your final output MUST BE a valid JSON object that strictly conforms to the output schema.
 - Do not output anything other than the JSON object itself.`,
   prompt: `{{#if file}}{{media url=file}}{{/if}}
