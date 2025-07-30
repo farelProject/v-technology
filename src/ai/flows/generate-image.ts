@@ -34,22 +34,33 @@ const generateImageFlow = ai.defineFlow(
     outputSchema: GenerateImageOutputSchema,
   },
   async input => {
-    const {media} = await ai.generate({
-      // IMPORTANT: ONLY the googleai/gemini-2.0-flash-preview-image-generation model is able to generate images. You MUST use exactly this model to generate images.
-      model: 'googleai/gemini-2.0-flash-preview-image-generation',
+    try {
+        const {media} = await ai.generate({
+        // IMPORTANT: ONLY the googleai/gemini-2.0-flash-preview-image-generation model is able to generate images. You MUST use exactly this model to generate images.
+        model: 'googleai/gemini-2.0-flash-preview-image-generation',
 
-      // simple prompt
-      prompt: input.prompt,
+        // simple prompt
+        prompt: input.prompt,
 
-      config: {
-        responseModalities: ['TEXT', 'IMAGE'], // MUST provide both TEXT and IMAGE, IMAGE only won't work
-      },
-    });
+        config: {
+            responseModalities: ['TEXT', 'IMAGE'], // MUST provide both TEXT and IMAGE, IMAGE only won't work
+        },
+        });
 
-    if (!media?.url) {
-      throw new Error('No image URL returned from image generation.');
+        if (media?.url) {
+            return {imageUrl: media.url};
+        }
+    } catch (error) {
+        console.error("Error during image generation:", error);
     }
+    
+    // Fallback if image generation fails or returns no URL
+    const placeholder = 'https://placehold.co/512x512/ccc/444.png?text=Image+not+available';
+    const response = await fetch(placeholder);
+    const buffer = await response.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString('base64');
+    const dataUrl = `data:image/png;base64,${base64}`;
 
-    return {imageUrl: media.url};
+    return { imageUrl: dataUrl };
   }
 );

@@ -1,39 +1,66 @@
 {
   "1753888737578": [
     {
-      "id": "1753889325344",
+      "id": "1753889657220",
       "userId": "1753888737578",
-      "title": "Hi...",
-      "timestamp": "2025-07-30T15:28:45.344Z",
+      "title": "Youtube...",
+      "timestamp": "2025-07-30T15:34:17.220Z",
       "messages": [
         {
-          "id": "1753889329249-0.5105241815637945",
+          "id": "1753889670554-0.012684197317901602",
           "role": "user",
-          "content": "Hi",
+          "content": "Youtube",
           "userId": "1753888737578",
           "isLoading": false
         },
         {
-          "id": "1753889329251",
+          "id": "1753889670556",
           "role": "assistant",
           "userId": "assistant",
-          "content": "Hi there! How can I help you today?",
-          "type": "text"
+          "content": "Here are the search results for your query about Youtube.",
+          "type": "text",
+          "search_results": [
+            {
+              "title": "YouTube - Broadcast Yourself",
+              "description": "This is the official website for YouTube, a video-sharing platform where users can upload, watch, and share videos. It provides access to a wide range of content, including music, entertainment, tutorials, and news.",
+              "link": "https://www.youtube.com/"
+            },
+            {
+              "title": "YouTube TV - Watch Live TV & On Demand - YouTube TV",
+              "description": "This is the official website for YouTube TV, a subscription-based streaming service that offers live TV channels, on-demand content, and cloud DVR storage. It provides an alternative to traditional cable or satellite TV.",
+              "link": "https://tv.youtube.com/"
+            },
+            {
+              "title": "YouTube - Wikipedia",
+              "description": "This Wikipedia page provides a detailed overview of YouTube, including its history, features, impact, and statistics. It's a good source for factual information about the platform.",
+              "link": "https://en.wikipedia.org/wiki/YouTube"
+            },
+            {
+              "title": "YouTube (@YouTube) / X",
+              "description": "This is the official X (formerly Twitter) account for YouTube. It provides updates, announcements, and interacts with the YouTube community.",
+              "link": "https://twitter.com/YouTube"
+            },
+            {
+              "title": "YouTube Music",
+              "description": "This is the official website for YouTube Music, a music streaming service that offers a vast library of songs, albums, and music videos. It allows users to discover new music, create playlists, and listen offline.",
+              "link": "https://music.youtube.com/"
+            }
+          ]
         },
         {
-          "id": "1753889359450-0.5509826251682304",
+          "id": "1753889705597-0.4738542489869857",
           "role": "user",
-          "content": "Cat cry",
+          "content": "Bird cry meme",
           "userId": "1753888737578",
           "isLoading": false
         },
         {
-          "id": "1753889359451",
+          "id": "1753889705597",
           "role": "assistant",
           "userId": "assistant",
-          "content": "Here is the image you requested for: \"Cat cry\"",
+          "content": "Here is the image you requested for: \"Bird cry meme\"",
           "type": "image",
-          "image_url": "/uploads/a70bfcaf-59da-4a3f-96bd-a28861ef91fb.png"
+          "image_url": "/uploads/9e9621f5-7fcb-409f-9789-00808d888d82.png"
         }
       ]
     }
