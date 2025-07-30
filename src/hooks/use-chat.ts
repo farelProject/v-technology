@@ -104,26 +104,24 @@ export function useChat(chatId: string | null) {
     if (!input.trim() && !fileDataUri) return;
     if (!session) return;
 
-    const userMessageId = `${Date.now()}-${Math.random()}`;
     const userMessage: Message = {
-      id: userMessageId,
+      id: `${Date.now()}-${Math.random()}`,
       role: 'user',
       content: input,
       userId: user.id,
       isLoading: !!fileDataUri
     };
     
-    const newMessages = [...messages, userMessage];
-    setMessages(newMessages);
+    setMessages((prev) => [...prev, userMessage]);
 
     startTransition(async () => {
+      let finalMessages = [...messages, userMessage];
       let fileForAi: string | undefined = fileDataUri;
-      let finalMessages = newMessages;
 
       if (fileDataUri) {
           const uploadResult = await uploadImageToServer(fileDataUri);
           if (uploadResult.success && uploadResult.url) {
-            finalMessages = finalMessages.map(msg => msg.id === userMessageId ? {...msg, isLoading: false, image_url: uploadResult.url} : msg);
+            finalMessages = finalMessages.map(msg => msg.id === userMessage.id ? {...msg, isLoading: false, image_url: uploadResult.url} : msg);
             setMessages(finalMessages);
           } else {
              toast({
@@ -131,31 +129,31 @@ export function useChat(chatId: string | null) {
                 description: uploadResult.error || 'Could not upload your image.',
                 variant: 'destructive',
             });
-            setMessages((prev) => prev.filter((msg) => msg.id !== userMessageId));
+            setMessages((prev) => prev.filter((msg) => msg.id !== userMessage.id));
             return;
           }
       }
       
       const loadingMessageId = `${Date.now()}`;
       const loadingMessage: Message = { id: loadingMessageId, role: 'assistant', content: '...', userId: 'assistant' };
-      finalMessages = [...finalMessages, loadingMessage];
+      finalMessages.push(loadingMessage);
       setMessages(finalMessages);
 
       try {
         const { aiStyle, aiModel } = settings;
         const systemInstruction = `Gaya AI: ${aiStyle}, Model AI: ${aiModel}.`;
         const queryWithInstruction = `${systemInstruction}\n\nPertanyaan: ${input}`;
-        let assistantMessage: Omit<Message, 'id' | 'role' | 'userId'>;
+        let assistantResponse: Omit<Message, 'id' | 'role' | 'userId'>;
 
         if (mode === 'chat') {
           const result = await chat({ query: queryWithInstruction, file: fileForAi });
-          assistantMessage = {
+          assistantResponse = {
             content: result.response,
             type: 'text',
           };
         } else if (mode === 'search') {
           const result = await chatWithSearch({ query: queryWithInstruction, file: fileForAi });
-          assistantMessage = {
+          assistantResponse = {
             content: result.response,
             type: 'text',
             search_results: result.searchResults,
@@ -175,7 +173,7 @@ export function useChat(chatId: string | null) {
             });
           }
 
-          assistantMessage = {
+          assistantResponse = {
             content: `Here is the image you requested for: "${input}"`,
             type: 'image',
             image_url: finalImageUrl,
@@ -188,7 +186,7 @@ export function useChat(chatId: string | null) {
             id: loadingMessageId,
             role: 'assistant',
             userId: 'assistant',
-            ...assistantMessage
+            ...assistantResponse
         };
 
         const finalMessagesWithResponse = finalMessages.map((msg) =>

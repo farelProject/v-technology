@@ -19,6 +19,26 @@
           "userId": "assistant"
         }
       ]
+    },
+    {
+      "id": "1753883819778",
+      "title": "Halo...",
+      "timestamp": "2025-07-30T13:56:59.779Z",
+      "messages": [
+        {
+          "id": "1753883823660-0.36314621975796546",
+          "role": "user",
+          "content": "Halo",
+          "isLoading": false
+        },
+        {
+          "id": "1753883823661",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Halo! Selamat datang! Ada yang bisa saya bantu hari ini?",
+          "type": "text"
+        }
+      ]
     }
   ],
   "1753853813182": [
