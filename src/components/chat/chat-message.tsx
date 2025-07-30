@@ -1,7 +1,8 @@
 'use client';
 
-import { Bot, User, Download, Copy } from 'lucide-react';
+import { Bot, User, Download, Copy, ExternalLink } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import type { Message } from '@/lib/types';
 import { CodeBlock } from './code-block';
+import { Separator } from '../ui/separator';
 
 interface ChatMessageProps {
   message: Message;
@@ -122,13 +124,20 @@ export function ChatMessage({ message }: ChatMessageProps) {
               <CardHeader>
                 <CardTitle className="text-sm">Web Search Results</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 text-xs">
+              <CardContent className="space-y-4 text-xs">
                 {message.search_results.map((result, i) => (
-                  <div key={i}>
-                    <a href={result.link} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">
-                      {result.title}
-                    </a>
-                    <p className="text-muted-foreground">{result.description}</p>
+                  <div key={i} className="space-y-2">
+                    <div>
+                      <h3 className="font-semibold text-primary">{result.title}</h3>
+                      <p className="text-muted-foreground">{result.description}</p>
+                    </div>
+                    <Button asChild size="sm" variant="outline">
+                      <Link href={result.link} target="_blank" rel="noopener noreferrer">
+                        Visit Web
+                        <ExternalLink className="ml-2 h-3 w-3" />
+                      </Link>
+                    </Button>
+                    {i < message.search_results!.length - 1 && <Separator />}
                   </div>
                 ))}
               </CardContent>

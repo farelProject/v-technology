@@ -43,22 +43,27 @@ async (input) => {
       {
         title: 'Dummy Search Result 1',
         description: 'This is a dummy search result for testing purposes.',
-        link: 'https://example.com/result1',
+        link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 1')}`,
       },
       {
         title: 'Dummy Search Result 2',
         description: 'Another dummy search result to demonstrate web search functionality.',
-        link: 'https://example.com/result2',
+        link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 2')}`,
       },
       {
         title: 'Dummy Search Result 3',
         description: 'A third dummy item for the web search results.',
-        link: 'https://example.com/result3',
+        link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 3')}`,
       },
       {
         title: 'Dummy Search Result 4',
-        description: 'And a final, fourth dummy item to complete the list.',
-        link: 'https://example.com/result4',
+        description: 'A fourth dummy item to complete the list.',
+        link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 4')}`,
+      },
+      {
+        title: 'Dummy Search Result 5',
+        description: 'And a final, fifth dummy item to complete the list.',
+        link: `https://google.com/search?q=${encodeURIComponent('Dummy Search Result 5')}`,
       },
     ];
   }
@@ -78,7 +83,8 @@ const chatWithSearchPrompt = ai.definePrompt({
 - The JSON object must have a 'response' property containing your answer.
 - Do not output anything other than the JSON object itself. For example, do not include markdown formatting like \`\`\`json\`\`\`.`,
   output: {
-    format: 'json'
+    format: 'json',
+    schema: ChatWithSearchOutputSchema,
   },
   prompt: `{{query}}`,
 });
@@ -95,13 +101,12 @@ const chatWithSearchFlow = ai.defineFlow(
 
     let parsedResponse: ChatWithSearchOutput;
     try {
-      const outputText = llmResponse.text;
-      const jsonResponse = JSON.parse(outputText);
-      const validation = ChatWithSearchOutputSchema.safeParse(jsonResponse);
-      if (validation.success) {
-        parsedResponse = validation.data;
+      const output = llmResponse.output;
+      if (output) {
+        parsedResponse = output;
       } else {
-        parsedResponse = { response: outputText };
+        const jsonResponse = JSON.parse(llmResponse.text);
+        parsedResponse = ChatWithSearchOutputSchema.parse(jsonResponse);
       }
     } catch (e) {
       // Not a JSON response, just use the text.
