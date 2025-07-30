@@ -95,7 +95,7 @@ const chatWithSearchFlow = ai.defineFlow(
     const toolCalls = llmResponse.toolCalls;
 
     const assistantMessage = {
-      response: llmResponse.output!.response,
+      response: llmResponse.output?.response ?? "I'm sorry, I couldn't generate a response.",
       toolCalls: [] as any,
     };
 
