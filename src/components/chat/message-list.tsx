@@ -21,7 +21,7 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
   return (
     <div className="container max-w-4xl mx-auto px-4 py-8">
       <div className="space-y-6">
-        {messages.map((msg, index) => (
+        {messages.map((msg) => (
           <ChatMessage key={msg.id} message={msg} />
         ))}
         {isLoading && messages[messages.length-1]?.role !== 'assistant' && (

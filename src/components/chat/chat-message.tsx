@@ -57,9 +57,7 @@ const parseMessageContent = (content: string) => {
     // Don't render empty strings
     if (!part) return null;
     return (
-      <p key={index} className="whitespace-pre-wrap leading-relaxed">
-        {part}
-      </p>
+      <div key={index} className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: part.replace(/\n/g, '<br />') }} />
     );
   });
 };
@@ -151,13 +149,13 @@ export function ChatMessage({ message }: ChatMessageProps) {
       )}
       <div
         className={cn(
-          'max-w-xl rounded-lg p-4 space-y-2',
+          'max-w-full md:max-w-xl rounded-lg p-4 space-y-2',
           isUser
             ? 'bg-primary text-primary-foreground'
             : 'bg-card text-card-foreground shadow-sm'
         )}
       >
-        <div className="prose prose-sm dark:prose-invert max-w-none">
+        <div className="space-y-2">
           {message.content && parseMessageContent(message.content)}
         </div>
         
