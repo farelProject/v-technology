@@ -5,7 +5,7 @@ export default function RegisterPage() {
   return (
     <AuthLayout
       title="Create an account"
-      description="Enter your email and password to get started"
+      description="Enter your details below to get started"
     >
       <UserAuthForm type="register" />
     </AuthLayout>
