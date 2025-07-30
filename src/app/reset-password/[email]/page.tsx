@@ -3,85 +3,151 @@
 import { useEffect, useState } from 'react';
 import { AuthLayout } from '@/components/auth-layout';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { getPasswordByEmail } from '@/lib/auth-service';
+import { getUserByResetToken, resetPassword } from '@/lib/auth-service';
 import Link from 'next/link';
-import { Eye, EyeOff } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
+function maskEmail(email: string) {
+    if (!email || !email.includes('@')) {
+        return '...';
+    }
+    const [name, domain] = email.split('@');
+    if (name.length <= 2) {
+        return `${name.slice(0, 1)}**@${domain}`;
+    }
+    return `${name.slice(0, 2)}${'*'.repeat(name.length - 2)}@${domain}`;
+}
 
 export default function ResetPasswordPage({ params }: { params: { email: string } }) {
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+  const [isValidToken, setIsValidToken] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+
   const { toast } = useToast();
-  const email = decodeURIComponent(params.email || '');
+  const router = useRouter();
+  const token = decodeURIComponent(params.email); // It's a token now, not an email
 
   useEffect(() => {
-    if (!email) {
-        setIsLoading(false);
+    const verifyToken = async () => {
+      const result = await getUserByResetToken(token);
+      if (result.success && result.email) {
+        setUserEmail(result.email);
+        setIsValidToken(true);
+      } else {
+        toast({
+          title: 'Error',
+          description: result.message || 'Token reset tidak valid atau telah kedaluwarsa.',
+          variant: 'destructive',
+        });
+        setIsValidToken(false);
+      }
+      setIsLoading(false);
+    };
+
+    verifyToken();
+  }, [token, toast]);
+
+  const handleResetSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      toast({
+        title: 'Error',
+        description: 'Kata sandi tidak cocok.',
+        variant: 'destructive'
+      });
+      return;
+    }
+    if (password.length < 6) {
         toast({
             title: 'Error',
-            description: 'Email tidak valid.',
+            description: 'Kata sandi harus minimal 6 karakter.',
             variant: 'destructive'
         });
         return;
     }
 
-    const fetchPassword = async () => {
-      const result = await getPasswordByEmail(email);
-      if (result.success && result.password) {
-        setPassword(result.password);
-      } else {
+    setIsResetting(true);
+    const result = await resetPassword(token, password);
+    if(result.success) {
         toast({
-          title: 'Error',
-          description: result.message || 'Tidak dapat mengambil kata sandi.',
-          variant: 'destructive',
+            title: 'Sukses',
+            description: 'Kata sandi Anda telah berhasil direset. Silakan masuk.',
         });
-      }
-      setIsLoading(false);
-    };
+        router.push('/login');
+    } else {
+        toast({
+            title: 'Error',
+            description: result.message,
+            variant: 'destructive'
+        });
+    }
+    setIsResetting(false);
+  }
 
-    fetchPassword();
-  }, [email, toast]);
+  if (isLoading) {
+    return (
+       <AuthLayout title="Memverifikasi..." description="Harap tunggu sebentar.">
+         <Loader2 className="mx-auto h-8 w-8 animate-spin" />
+       </AuthLayout>
+    )
+  }
+
+  if (!isValidToken) {
+     return (
+       <AuthLayout title="Token Tidak Valid" description="Tautan reset kata sandi ini tidak valid atau telah kedaluwarsa.">
+         <Button asChild className="w-full">
+            <Link href="/forgot-password">Minta Tautan Baru</Link>
+          </Button>
+       </AuthLayout>
+    )
+  }
 
   return (
     <AuthLayout
-      title="Kata Sandi Anda"
-      description="Ini adalah kata sandi Anda. Simpan di tempat yang aman."
+      title="Reset Kata Sandi Anda"
+      description={`Memperbarui kata sandi untuk ${maskEmail(userEmail)}`}
     >
-      <Card className="w-full">
-        <CardHeader>
-           <CardTitle className="text-center text-lg">Email: {email}</CardTitle>
-           <CardDescription className="text-center">Kata sandi Anda ditemukan.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-            {isLoading ? (
-                <Skeleton className="h-10 w-full" />
-            ) : password ? (
-                 <div className="relative">
-                    <input
-                        type={showPassword ? 'text' : 'password'}
-                        readOnly
-                        value={password}
-                        className="w-full rounded-md border bg-muted px-3 py-2 text-center text-lg font-bold"
-                    />
-                    <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground"
-                    >
-                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                    </button>
-                 </div>
-            ) : (
-                <p className="text-center text-destructive">Kata sandi tidak ditemukan.</p>
-            )}
+      <Card className="w-full border-none shadow-none">
+        <CardContent className="p-0">
+          <form onSubmit={handleResetSubmit} className="grid gap-4">
+             <div className="grid gap-2">
+                <Label htmlFor="new-password">Kata Sandi Baru</Label>
+                <Input
+                    id="new-password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    disabled={isResetting}
+                />
+             </div>
+             <div className="grid gap-2">
+                <Label htmlFor="confirm-password">Konfirmasi Kata Sandi Baru</Label>
+                <Input
+                    id="confirm-password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    disabled={isResetting}
+                />
+             </div>
 
-          <Button asChild className="w-full">
-            <Link href="/login">Kembali ke Login</Link>
-          </Button>
+            <Button type="submit" disabled={isResetting} className="w-full">
+               {isResetting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+               Reset Kata Sandi
+            </Button>
+          </form>
         </CardContent>
       </Card>
     </AuthLayout>
