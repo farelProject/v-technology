@@ -1,3 +1,4 @@
+
 'use client';
 
 import { AppShell } from '@/components/app-shell';
@@ -29,11 +30,55 @@ import { deleteUser } from '@/lib/auth-service';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
+import { Progress } from '@/components/ui/progress';
+import { formatDistanceToNow } from 'date-fns';
+import { getAndUpdateChatLimit } from '@/lib/chat-service';
+import { type ChatLimit } from '@/lib/types';
+
+
+function ChatLimitDisplay({ initialLimit }: { initialLimit: ChatLimit | null }) {
+    const [limitInfo, setLimitInfo] = useState<ChatLimit | null>(initialLimit);
+    const { user } = useAuth();
+    
+    useEffect(() => {
+        const fetchLimit = async () => {
+            if (user?.id) {
+                const latestLimit = await getAndUpdateChatLimit(user.id);
+                setLimitInfo(latestLimit);
+            }
+        };
+        fetchLimit();
+    }, [user?.id]);
+    
+    if (!limitInfo) {
+        return <div className="text-sm text-muted-foreground">Loading limit info...</div>;
+    }
+
+    const { count, limit, lastReset } = limitInfo;
+    const percentage = (count / limit) * 100;
+    const nextResetDate = new Date(new Date(lastReset).getTime() + 24 * 60 * 60 * 1000);
+
+    return (
+        <div className="space-y-2">
+            <div className="flex justify-between items-baseline">
+                <Label>Daily Chat Limit</Label>
+                <p className="text-sm font-medium text-muted-foreground">
+                    {count} / {limit} Used
+                </p>
+            </div>
+            <Progress value={percentage} className="w-full" />
+            <p className="text-xs text-muted-foreground text-right">
+                Resets {formatDistanceToNow(nextResetDate, { addSuffix: true })}
+            </p>
+        </div>
+    );
+}
+
 
 export default function ProfilePage() {
   const { toast } = useToast();
   const router = useRouter();
-  const { user, logout, isLoading: isAuthLoading } = useAuth();
+  const { user, logout, isLoading: isAuthLoading, chatLimit } = useAuth();
   
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -91,7 +136,7 @@ export default function ProfilePage() {
 
   return (
     <AppShell>
-      <div className="container mx-auto max-w-2xl py-8">
+      <div className="container mx-auto max-w-2xl py-8 space-y-8">
         <Card>
           <CardHeader>
             <CardTitle>Profile</CardTitle>
@@ -147,6 +192,17 @@ export default function ProfilePage() {
             </AlertDialog>
           </CardFooter>
         </Card>
+        
+        <Card>
+            <CardHeader>
+                <CardTitle>Usage</CardTitle>
+                <CardDescription>Your daily chat limit status.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <ChatLimitDisplay initialLimit={chatLimit} />
+            </CardContent>
+        </Card>
+
       </div>
     </AppShell>
   );

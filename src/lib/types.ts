@@ -1,3 +1,4 @@
+
 export interface Message {
   id: string;
   role: 'user' | 'assistant';
@@ -10,8 +11,9 @@ export interface Message {
 }
 
 export type AiMode = 'chat' | 'image' | 'search';
-export type AiStyle = 'Cheerful' | 'Professional' | 'Sarcastic' | 'Enthusiastic' | 'Poetic';
-export type AiModel = 'General Assistant' | 'Programmer' | 'Creative Writer' | 'Scientist' | 'Historian';
+export type AiStyle = 'Cheerful' | 'Professional' | 'Sarcastic' | 'Enthusiastic' | 'Poetic' | 'Storyteller' | 'Comedian' | 'Philosopher';
+export type AiModel = 'General Assistant' | 'Programmer' | 'Creative Writer' | 'Scientist' | 'Historian' | 'Linguist' | 'Debater' | 'Fact Checker';
+
 
 export interface Settings {
   theme: 'light' | 'dark' | 'system';
@@ -26,11 +28,19 @@ export interface User {
   email: string;
 }
 
+export interface ChatLimit {
+    count: number;
+    limit: number;
+    lastReset: string; // ISO string
+}
+
+
 // Represents the full user object stored in the database
 export interface StoredUser extends User {
     password?: string; // Hashed password
     resetPasswordToken?: string | null;
     resetPasswordExpires?: number | null;
+    chatLimit: ChatLimit;
 }
 
 export interface ChatSession {

@@ -19,6 +19,40 @@
           "type": "text"
         }
       ]
+    },
+    {
+      "id": "1753885594620",
+      "title": "What is artificial intelligence?...",
+      "timestamp": "2025-07-30T14:26:34.620Z",
+      "messages": [
+        {
+          "id": "1753885606207-0.5976022544436324",
+          "role": "user",
+          "content": "What is artificial intelligence?",
+          "isLoading": false
+        },
+        {
+          "id": "1753885606208",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Artificial intelligence (AI) is a wide-ranging branch of computer science concerned with building smart machines capable of performing tasks that typically require human intelligence. AI encompasses several techniques, including machine learning, deep learning, and natural language processing, to enable computers to learn from data, recognize patterns, and make decisions or predictions with minimal human intervention.",
+          "type": "text"
+        },
+        {
+          "id": "1753885631652-0.4964875605119634",
+          "role": "user",
+          "content": "Seorang pria menyendiri di tengah jalan",
+          "isLoading": false
+        },
+        {
+          "id": "1753885631653",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Here is the image you requested for: \"Seorang pria menyendiri di tengah jalan\"",
+          "type": "image",
+          "image_url": "/uploads/237bbb0f-f904-4b38-9f74-0ef09f0a69c4.png"
+        }
+      ]
     }
   ],
   "1753853813182": [

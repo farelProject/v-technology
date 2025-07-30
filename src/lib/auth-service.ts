@@ -1,3 +1,4 @@
+
 'use server';
 
 import { promises as fs } from 'fs';
@@ -42,15 +43,21 @@ export async function registerUser({ name, email, password }: any) {
     password: hashedPassword,
     resetPasswordToken: null,
     resetPasswordExpires: null,
+    chatLimit: {
+        count: 0,
+        limit: 100,
+        lastReset: new Date().toISOString(),
+    }
   };
 
   users.push(newUser);
   await writeUsers(users);
 
-  return { success: true, user: {id: newUser.id, name: newUser.name, email: newUser.email } };
+  const { password: _, ...userWithoutPassword } = newUser;
+  return { success: true, user: userWithoutPassword };
 }
 
-export async function loginUser({ email, password }: any): Promise<{success: boolean, message?: string, user?: User}> {
+export async function loginUser({ email, password }: any): Promise<{success: boolean, message?: string, user?: Omit<StoredUser, 'password'>}> {
   const users = await readUsers();
   const user = users.find((u) => u.email === email);
 
@@ -63,7 +70,8 @@ export async function loginUser({ email, password }: any): Promise<{success: boo
     return { success: false, message: 'Invalid email or password.' };
   }
 
-  return { success: true, user: { id: user.id, name: user.name, email: user.email } };
+  const { password: _, ...userWithoutPassword } = user;
+  return { success: true, user: userWithoutPassword };
 }
 
 export async function deleteUser(email: string) {
@@ -73,6 +81,7 @@ export async function deleteUser(email: string) {
   if (userIndex === -1) {
     return { success: false, message: 'User not found.' };
   }
+  const userIdToDelete = users[userIndex].id;
 
   users.splice(userIndex, 1);
   await writeUsers(users);
@@ -81,7 +90,7 @@ export async function deleteUser(email: string) {
   try {
     const chatDbPath = path.join(process.cwd(), 'src', 'data', 'chats.json');
     const allChats = JSON.parse(await fs.readFile(chatDbPath, 'utf-8'));
-    const userIdToDelete = users[userIndex]?.id;
+
     if (userIdToDelete && allChats[userIdToDelete]) {
         delete allChats[userIdToDelete];
         await fs.writeFile(chatDbPath, JSON.stringify(allChats, null, 2), 'utf-8');

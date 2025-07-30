@@ -1,3 +1,4 @@
+
 [
   {
     "id": "1753853813182",
@@ -5,6 +6,11 @@
     "email": "farproject.studio@gmail.com",
     "password": "$2a$10$dieaELpBb.vAWSR.E4/ll.eulL15saQxoDx3RWy/AHkXiVoMhNxOO",
     "resetPasswordToken": null,
-    "resetPasswordExpires": null
+    "resetPasswordExpires": null,
+    "chatLimit": {
+      "count": 0,
+      "limit": 100,
+      "lastReset": "2023-01-01T00:00:00.000Z"
+    }
   }
 ]

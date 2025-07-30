@@ -3,23 +3,41 @@
 
 import { promises as fs } from 'fs';
 import path from 'path';
-import type { ChatSession } from './types';
+import type { ChatSession, StoredUser, ChatLimit } from './types';
 
 const chatDbPath = path.join(process.cwd(), 'src', 'data', 'chats.json');
+const userDbPath = path.join(process.cwd(), 'src', 'data', 'users.json');
 
 type ChatDatabase = Record<string, ChatSession[]>;
 
+// User DB Functions
+async function readUsers(): Promise<StoredUser[]> {
+  try {
+    const data = await fs.readFile(userDbPath, 'utf-8');
+    return JSON.parse(data);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return [];
+    }
+    throw error;
+  }
+}
+
+async function writeUsers(users: StoredUser[]) {
+  await fs.writeFile(userDbPath, JSON.stringify(users, null, 2), 'utf-8');
+}
+
+
+// Chat DB Functions
 async function readChatDatabase(): Promise<ChatDatabase> {
   try {
     const data = await fs.readFile(chatDbPath, 'utf-8');
-    // If the file is empty, return an empty object
     if (!data) {
         return {};
     }
     return JSON.parse(data);
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-      // If file doesn't exist, create it with an empty object
       await fs.writeFile(chatDbPath, '{}', 'utf-8');
       return {};
     }
@@ -62,10 +80,8 @@ export async function saveChatSession(userId: string, session: ChatSession) {
 
   const sessionIndex = db[userId].findIndex((s) => s.id === session.id);
   if (sessionIndex > -1) {
-    // Update existing session
     db[userId][sessionIndex] = session;
   } else {
-    // Add new session
     db[userId].push(session);
   }
 
@@ -88,4 +104,29 @@ export async function deleteChatSession(userId: string, sessionId: string) {
 
   await writeChatDatabase(db);
   return { success: true };
+}
+
+// Chat Limit Functions
+export async function getAndUpdateChatLimit(userId: string): Promise<ChatLimit | null> {
+    const users = await readUsers();
+    const userIndex = users.findIndex(u => u.id === userId);
+
+    if (userIndex === -1) {
+        return null;
+    }
+    
+    const user = users[userIndex];
+    const now = new Date();
+    const lastReset = new Date(user.chatLimit.lastReset);
+
+    // Check if 24 hours have passed
+    if (now.getTime() - lastReset.getTime() > 24 * 60 * 60 * 1000) {
+        user.chatLimit.count = 1; // Reset to 1 as this is the first chat of the new period
+        user.chatLimit.lastReset = now.toISOString();
+    } else {
+        user.chatLimit.count += 1;
+    }
+
+    await writeUsers(users);
+    return user.chatLimit;
 }
