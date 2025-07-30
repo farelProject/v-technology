@@ -21,11 +21,11 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent className="space-y-4 text-muted-foreground">
             <p>
-              VTech AI is a modern and intuitive AI assistant created by Farel Alfareza. 
-              It's designed to help you with a variety of tasks, from answering questions and generating code to creating images from text prompts.
+              VTech AI is a modern and intuitive AI assistant created by Farel Alfareza.
+              It's designed to help you with a variety of tasks, from answering complex questions and generating code to creating beautiful images from text prompts.
             </p>
             <p>
-              Powered by cutting-edge generative AI models, VTech aims to provide a seamless and helpful user experience.
+              Our mission is to provide a seamless, helpful, and powerful user experience, making advanced AI accessible to everyone.
             </p>
              <p className="font-semibold text-primary pt-4">Version 1.0.0</p>
           </CardContent>
