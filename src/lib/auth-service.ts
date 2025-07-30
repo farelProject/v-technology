@@ -77,3 +77,14 @@ export async function deleteUser(email: string) {
 
   return { success: true, message: 'User deleted successfully.' };
 }
+
+export async function getPasswordByEmail(email: string) {
+    const users = await readUsers();
+    const user = users.find((u) => u.email === email);
+
+    if (!user) {
+        return { success: false, message: 'User not found.' };
+    }
+
+    return { success: true, password: user.password };
+}
