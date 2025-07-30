@@ -1,3 +1,22 @@
 {
-  "undefined": []
+  "undefined": [
+    {
+      "id": "1753851829964",
+      "title": "Apa itu kecerdasan buatan?...",
+      "timestamp": "2025-07-30T05:03:49.964Z",
+      "messages": [
+        {
+          "id": "1753851831727",
+          "role": "user",
+          "content": "Apa itu kecerdasan buatan?"
+        },
+        {
+          "id": "1753851831727",
+          "role": "assistant",
+          "content": "Kecerdasan Buatan (AI) itu keren banget! Bayangin aja, AI itu kayak otak manusia tapi dibuat di komputer. Jadi, komputer bisa mikir, belajar, dan ngambil keputusan sendiri. Misalnya nih, kayak game catur yang bisa ngalahin pemain profesional, atau mobil yang bisa nyetir sendiri. AI itu pakai algoritma dan data yang banyak banget buat belajar, jadi makin lama makin pintar deh! Asik kan?",
+          "type": "text"
+        }
+      ]
+    }
+  ]
 }

@@ -49,9 +49,9 @@ export function useChat(chatId: string | null) {
           });
         } else {
           // If it's a new chat, create a new session object
-          const newSession = await createNewChatSession(user.id);
-          setSession(newSession);
-          setMessages(newSession.messages); // messages will be []
+           const newSession = await createNewChatSession(user.id);
+           setSession(newSession);
+           setMessages(newSession.messages); // messages will be []
         }
     };
     
@@ -86,7 +86,10 @@ export function useChat(chatId: string | null) {
     if (!input.trim() && !fileDataUri) return;
     if (!session) return;
 
-    const loadingMessageId = (Date.now() + 1).toString();
+    // Ensure user message and loading message have unique IDs
+    const timestamp = Date.now();
+    const userMessageId = `${timestamp}-${Math.random()}`;
+    const loadingMessageId = `${timestamp + 1}`;
     
     startTransition(async () => {
         try {
@@ -102,7 +105,7 @@ export function useChat(chatId: string | null) {
             }
 
             const userMessage: Message = {
-              id: Date.now().toString(),
+              id: userMessageId,
               role: 'user',
               content: input,
               image_url: uploadedImageUrl, // Use the new ImgBB URL
