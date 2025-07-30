@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Mic, Image as ImageIcon, MessageSquare, StopCircle, Search } from 'lucide-react';
+import { Send, Mic, Image as ImageIcon, MessageSquare, StopCircle, Search, Paperclip, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -14,9 +14,11 @@ import type { AiMode } from '@/lib/types';
 import { useSettings } from '@/contexts/settings-context';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Label } from '../ui/label';
+import { useToast } from '@/hooks/use-toast';
+import { Badge } from '../ui/badge';
 
 interface ChatInputFormProps {
-  onSend: (mode: AiMode, message: string) => void;
+  onSend: (mode: AiMode, message: string, fileDataUri?: string) => void;
   isLoading: boolean;
 }
 
@@ -44,6 +46,11 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
   const [isListening, setIsListening] = useState(false);
   const { settings, setSettings } = useSettings();
   const recognitionRef = useRef<any>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileDataUri, setFileDataUri] = useState<string | null>(null);
+  const { toast } = useToast();
+
 
   useEffect(() => {
     if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
@@ -75,11 +82,52 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
     setIsListening(!isListening);
   };
   
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onload = (loadEvent) => {
+        const result = loadEvent.target?.result;
+        if (typeof result === 'string') {
+          setFileDataUri(result);
+        } else {
+            toast({
+                title: 'Error reading file',
+                description: 'Could not read file data.',
+                variant: 'destructive',
+            });
+        }
+      };
+      reader.onerror = () => {
+        toast({
+            title: 'Error reading file',
+            description: 'Could not read file data.',
+            variant: 'destructive',
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const clearFile = () => {
+      setSelectedFile(null);
+      setFileDataUri(null);
+      if(fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (input.trim()) {
-      onSend(mode, input);
+    if (input.trim() || selectedFile) {
+      onSend(mode, input, fileDataUri || undefined);
       setInput('');
+      clearFile();
     }
   };
 
@@ -118,10 +166,20 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
                 </Select>
             </div>
         </div>
+        {selectedFile && (
+            <div className="p-2">
+                <Badge variant="secondary">
+                    {selectedFile.name}
+                    <Button variant="ghost" size="icon" className="h-4 w-4 ml-2" onClick={clearFile}>
+                        <X className="h-3 w-3"/>
+                    </Button>
+                </Badge>
+            </div>
+        )}
       <div className="relative flex items-center">
         <Textarea
           placeholder={modeConfig[mode].placeholder}
-          className="min-h-12 w-full resize-none border-0 p-3 pr-28 shadow-none focus-visible:ring-0"
+          className="min-h-12 w-full resize-none border-0 p-3 pr-40 shadow-none focus-visible:ring-0"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -149,13 +207,18 @@ export function ChatInputForm({ onSend, isLoading }: ChatInputFormProps) {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
+          <Button type="button" variant="ghost" size="icon" onClick={handleUploadClick} disabled={isLoading}>
+            <Paperclip className="h-5 w-5" />
+          </Button>
+
           {recognitionRef.current && (
             <Button type="button" variant="ghost" size="icon" onClick={handleMicClick} disabled={isLoading}>
               {isListening ? <StopCircle className="h-5 w-5 text-red-500" /> : <Mic className="h-5 w-5" />}
             </Button>
           )}
 
-          <Button type="submit" size="icon" disabled={isLoading || !input.trim()}>
+          <Button type="submit" size="icon" disabled={isLoading || (!input.trim() && !selectedFile)}>
             <Send className="h-5 w-5" />
           </Button>
         </div>

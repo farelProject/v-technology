@@ -86,6 +86,9 @@ export function ChatMessage({ message }: ChatMessageProps) {
     }
   };
 
+  const isImageUrl = (url?: string) => {
+      return url && url.startsWith('data:image/');
+  }
 
   return (
     <div className={cn('flex items-start space-x-4', isUser && 'justify-end')}>
@@ -105,7 +108,17 @@ export function ChatMessage({ message }: ChatMessageProps) {
         )}
       >
         <div className="prose dark:prose-invert">
-          {message.type === 'image' && message.image_url ? (
+          {message.image_url && isImageUrl(message.image_url) && (
+            <Image
+              src={message.image_url}
+              alt={message.content || 'Uploaded image'}
+              width={400}
+              height={400}
+              className="rounded-md"
+              data-ai-hint={isUser ? "uploaded image" : "generated image"}
+            />
+          )}
+          {message.type === 'image' && message.image_url && !isUser ? (
             <Image
               src={message.image_url}
               alt={message.content}
@@ -115,7 +128,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
               data-ai-hint="generated image"
             />
           ) : (
-            parseMessageContent(message.content)
+            message.content && parseMessageContent(message.content)
           )}
         </div>
         {message.search_results && message.search_results.length > 0 && (

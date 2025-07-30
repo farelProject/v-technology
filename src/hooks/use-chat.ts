@@ -13,13 +13,14 @@ export function useChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isPending, startTransition] = useTransition();
 
-  const handleSend = (mode: AiMode, input: string) => {
-    if (!input.trim()) return;
+  const handleSend = (mode: AiMode, input: string, fileDataUri?: string) => {
+    if (!input.trim() && !fileDataUri) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
       content: input,
+      image_url: fileDataUri,
     };
     setMessages((prev) => [...prev, userMessage]);
 
@@ -40,7 +41,7 @@ export function useChat() {
           }
           const queryWithInstruction = `${systemInstruction}\n\nPertanyaan: ${input}`;
           
-          const result = await chatWithSearch({ query: queryWithInstruction });
+          const result = await chatWithSearch({ query: queryWithInstruction, file: fileDataUri });
           
           const assistantMessage: Message = {
             id: loadingMessage.id,
