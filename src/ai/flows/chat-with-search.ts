@@ -92,10 +92,10 @@ const chatWithSearchFlow = ai.defineFlow(
   },
   async input => {
     const llmResponse = await chatWithSearchPrompt(input);
-    const toolCalls = llmResponse.toolCalls();
+    const toolCalls = llmResponse.toolCalls;
 
     const assistantMessage = {
-      response: llmResponse.output()!.response,
+      response: llmResponse.output!.response,
       toolCalls: [] as any,
     };
 
