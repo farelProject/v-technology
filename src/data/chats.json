@@ -1,27 +1,3 @@
 {
-  "1753888737578": [
-    {
-      "id": "1753913769071",
-      "userId": "1753888737578",
-      "title": "Kenapa ini? ...",
-      "timestamp": "2025-07-30T22:16:09.071Z",
-      "messages": [
-        {
-          "id": "1753913829852-0.2982547571817695",
-          "role": "user",
-          "content": "Kenapa ini? ",
-          "userId": "1753888737578",
-          "isLoading": false,
-          "image_url": "/uploads/c848cd6c-85c0-4d9d-911e-8f2e63b63c08.png"
-        },
-        {
-          "id": "1753913833584",
-          "role": "assistant",
-          "userId": "assistant",
-          "content": "The error messages indicate that the Debian 'buster' repositories are not providing Release files, which prevents `apt-get update` from working. This can happen because 'buster' is an older release and might not be actively maintained. To fix this, you can try updating your Debian sources to a supported release (e.g., bullseye or bookworm) or use a different base image in your Dockerfile.\n\nAdditionally, the Dockerfile command combines multiple operations into a single `RUN` instruction, which can cause issues. It's better to separate the `apt-get update` and `apt-get install` commands.\n\nHere's a corrected `Dockerfile`:\n\n```dockerfile\nFROM debian:latest\n\nRUN apt-get update && \\\n    apt-get install -y --no-install-recommends ffmpeg imagemagick webp && \\\n    apt-get upgrade -y && \\\n    rm -rf /var/lib/apt/lists/*\n```\n\nKey changes and explanations:\n\n*   **`FROM debian:latest`**: Consider using a specific supported Debian version such as `debian:bullseye` or `debian:bookworm`. Using `latest` can sometimes point to an unsupported version.\n*   **Separate commands**: I combined the install command into a single line for better readability.\n*   **`--no-install-recommends`**: Added this option to reduce the size of the image by skipping the installation of recommended packages.\n*   **Clean up**: The `rm -rf /var/lib/apt/lists/*` command cleans up the apt lists to reduce the image size.",
-          "type": "text"
-        }
-      ]
-    }
-  ]
+  "1753888737578": []
 }
