@@ -8,7 +8,7 @@ export function ChatView() {
   const { messages, isLoading, handleSend } = useChat();
 
   return (
-    <div className="flex flex-col h-[calc(100vh-3.5rem)]">
+    <div className="flex flex-col">
       <div className="flex-1 overflow-y-auto pb-24">
         <MessageList messages={messages} isLoading={isLoading} />
       </div>
