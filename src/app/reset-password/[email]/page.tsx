@@ -16,9 +16,19 @@ export default function ResetPasswordPage({ params }: { params: { email: string 
   const [isLoading, setIsLoading] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
-  const email = decodeURIComponent(params.email);
+  const email = decodeURIComponent(params.email || '');
 
   useEffect(() => {
+    if (!email) {
+        setIsLoading(false);
+        toast({
+            title: 'Error',
+            description: 'Email tidak valid.',
+            variant: 'destructive'
+        });
+        return;
+    }
+
     const fetchPassword = async () => {
       const result = await getPasswordByEmail(email);
       if (result.success && result.password) {
