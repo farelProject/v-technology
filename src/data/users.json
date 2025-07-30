@@ -7,7 +7,7 @@
     "resetPasswordToken": null,
     "resetPasswordExpires": null,
     "chatLimit": {
-      "count": 13,
+      "count": 20,
       "limit": 100,
       "lastReset": "2025-07-30T15:18:57.578Z"
     }

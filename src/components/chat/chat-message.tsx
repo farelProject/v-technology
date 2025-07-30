@@ -75,17 +75,19 @@ const ImageDisplay = ({ src, alt }: { src: string; alt: string }) => {
         </div>
       </div>
     </DialogTrigger>
-    <DialogContent className="max-w-3xl">
+    <DialogContent className="max-w-screen-lg w-full h-auto max-h-[90vh] p-2 sm:p-4">
        <DialogHeader>
         <DialogTitle className="sr-only">Image Preview</DialogTitle>
       </DialogHeader>
-      <Image
-        src={src}
-        alt={alt}
-        width={800}
-        height={800}
-        className="rounded-md object-contain"
-      />
+      <div className="relative w-full h-full flex items-center justify-center">
+        <Image
+            src={src}
+            alt={alt}
+            width={1200}
+            height={1200}
+            className="rounded-md object-contain max-w-full max-h-[85vh]"
+        />
+      </div>
     </DialogContent>
   </Dialog>
   )
