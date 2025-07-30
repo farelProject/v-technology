@@ -1,11 +1,10 @@
+
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import {
-  User,
   Settings,
-  CreditCard,
   Share2,
   Twitter,
   Facebook,
@@ -30,7 +29,7 @@ import { useAuth } from '@/contexts/auth-context';
 
 export function Header() {
   const { toast } = useToast();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const { user, logout } = useAuth();
 
   const handleShare = (platform: 'twitter' | 'facebook' | 'linkedin' | 'copy') => {
@@ -121,16 +120,8 @@ export function Header() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              {user && (
-                 <DropdownMenuItem asChild>
-                   <Link href="/profile"><User className="mr-2 h-4 w-4" /> Profile</Link>
-                </DropdownMenuItem>
-              )}
               <DropdownMenuItem asChild>
                  <Link href="/settings"><Settings className="mr-2 h-4 w-4" /> Settings</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                 <Link href="/credits"><CreditCard className="mr-2 h-4 w-4" /> Credits</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {user ? (
