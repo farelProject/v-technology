@@ -21,7 +21,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useToast } from '@/hooks/use-toast';
-import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from './ui/sheet';
 import { Sidebar } from './sidebar';
 
 export function Header() {
@@ -63,7 +63,10 @@ export function Header() {
                 <span className="sr-only">Toggle Sidebar</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-72">
+            <SheetContent side="left" className="w-72 p-0">
+               <SheetHeader className="p-4 border-b">
+                <SheetTitle className="sr-only">Sidebar Menu</SheetTitle>
+              </SheetHeader>
               <Sidebar onLinkClick={() => setIsSidebarOpen(false)} />
             </SheetContent>
           </Sheet>
