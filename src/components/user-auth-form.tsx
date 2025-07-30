@@ -65,8 +65,8 @@ export function UserAuthForm({ className, type, ...props }: UserAuthFormProps) {
         options: {
           data: {
             full_name: name,
-          }
-        }
+          },
+        },
       });
 
       if (error) {
