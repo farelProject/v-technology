@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Bot, User, Download, Copy, ExternalLink, Eye } from 'lucide-react';
@@ -56,14 +57,19 @@ const parseMessageContent = (content: string) => {
       return <CodeBlock key={index} language={language} code={code} />;
     }
     // Don't render empty strings
-    if (!part) return null;
-    
-    // Basic markdown to HTML conversion
+    if (!part.trim()) return null;
+
+    // Enhanced markdown to HTML conversion
     const htmlPart = part
+      .replace(/^\s*[\*|\-]\s(.*)/gm, '<li>$1</li>') // Unordered list items
+      .replace(/(\<li\>.*\<\/li\>)+/g, '<ul>$&</ul>') // Wrap list items in <ul>
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
       .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
       .replace(/`(.*?)`/g, '<code>$1</code>') // Inline code
-      .replace(/\n/g, '<br />'); // New lines
+      .replace(/\n/g, '<br />') // New lines
+      .replace(/<\/ul><br \/>/g, '</ul>') // Fix extra space after lists
+      .replace(/<br \/><ul>/g, '<ul>'); // Fix extra space before lists
+
 
     return (
       <div key={index} className="prose prose-sm dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: htmlPart }} />
