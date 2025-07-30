@@ -30,7 +30,7 @@ export function SuggestedQuestions({ onQuestionClick }: SuggestedQuestionsProps)
         opts={{
           align: 'start',
         }}
-        className="w-full"
+        className="w-full relative"
       >
         <CarouselContent>
           {questions.map((question, index) => (
@@ -48,8 +48,8 @@ export function SuggestedQuestions({ onQuestionClick }: SuggestedQuestionsProps)
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        <CarouselPrevious className="absolute left-0 top-1/2 -translate-y-1/2" />
+        <CarouselNext className="absolute right-0 top-1/2 -translate-y-1/2" />
       </Carousel>
     </div>
   );
