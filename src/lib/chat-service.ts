@@ -7,6 +7,7 @@ import type { ChatSession, StoredUser, ChatLimit } from './types';
 
 const chatDbPath = path.join(process.cwd(), 'src', 'data', 'chats.json');
 const userDbPath = path.join(process.cwd(), 'src', 'data', 'users.json');
+const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
 
 type ChatDatabase = Record<string, ChatSession[]>;
 
@@ -95,11 +96,29 @@ export async function deleteChatSession(userId: string, sessionId: string) {
     return { success: false, message: 'User not found.' };
   }
 
+  const sessionToDelete = db[userId].find((s) => s.id === sessionId);
   const initialLength = db[userId].length;
+  
   db[userId] = db[userId].filter((s) => s.id !== sessionId);
 
   if (db[userId].length === initialLength) {
     return { success: false, message: 'Chat session not found.' };
+  }
+
+  // If a session was found and deleted, also delete its associated image files.
+  if (sessionToDelete) {
+    for (const message of sessionToDelete.messages) {
+        // Check for locally hosted images
+        if(message.image_url && message.image_url.startsWith('/uploads/')) {
+            try {
+                const filename = path.basename(message.image_url);
+                await fs.unlink(path.join(uploadsDir, filename));
+            } catch(error) {
+                // Log error but continue, as the chat data is more important.
+                console.error(`Failed to delete image file: ${message.image_url}`, error);
+            }
+        }
+    }
   }
 
   await writeChatDatabase(db);

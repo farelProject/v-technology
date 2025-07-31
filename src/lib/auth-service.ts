@@ -9,6 +9,8 @@ import type { User, StoredUser } from './types';
 
 
 const dbPath = path.join(process.cwd(), 'src', 'data', 'users.json');
+const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+
 
 async function readUsers(): Promise<StoredUser[]> {
   try {
@@ -83,22 +85,42 @@ export async function deleteUser(email: string) {
   }
   const userIdToDelete = users[userIndex].id;
 
-  users.splice(userIndex, 1);
-  await writeUsers(users);
-
-  // Also delete user's chats
+  // Also delete user's chats and associated images
   try {
     const chatDbPath = path.join(process.cwd(), 'src', 'data', 'chats.json');
     const allChats = JSON.parse(await fs.readFile(chatDbPath, 'utf-8'));
 
     if (userIdToDelete && allChats[userIdToDelete]) {
-        delete allChats[userIdToDelete];
-        await fs.writeFile(chatDbPath, JSON.stringify(allChats, null, 2), 'utf-8');
+      const userSessions = allChats[userIdToDelete];
+      
+      // Delete images from each session
+      for (const session of userSessions) {
+        if (session.messages) {
+          for (const message of session.messages) {
+            if (message.image_url && message.image_url.startsWith('/uploads/')) {
+              try {
+                const filename = path.basename(message.image_url);
+                await fs.unlink(path.join(uploadsDir, filename));
+              } catch (fileError) {
+                console.error(`Failed to delete image file for user ${userIdToDelete}: ${message.image_url}`, fileError);
+              }
+            }
+          }
+        }
+      }
+      
+      delete allChats[userIdToDelete];
+      await fs.writeFile(chatDbPath, JSON.stringify(allChats, null, 2), 'utf-8');
     }
   } catch (error) {
-    // Ignore if chats file doesn't exist or other errors
-    console.error("Could not delete user chats:", error);
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') {
+      console.error("Could not delete user chats:", error);
+    }
   }
+
+  // Finally, delete the user
+  users.splice(userIndex, 1);
+  await writeUsers(users);
 
 
   return { success: true, message: 'User deleted successfully.' };
