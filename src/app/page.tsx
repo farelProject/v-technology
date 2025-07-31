@@ -2,7 +2,7 @@
 import { AppShell } from '@/components/app-shell';
 import { Button } from '@/components/ui/button';
 import { VTechIcon } from '@/components/vtech-icon';
-import { ArrowRight, Bot, Code, GraduationCap, Image as ImageIcon, Lightbulb, Search, ShoppingCart, Sparkles, CheckCircle, PencilRuler, Briefcase } from 'lucide-react';
+import { ArrowRight, Bot, Code, Briefcase, Image as ImageIcon, Lightbulb, Search, Sparkles, CheckCircle, GraduationCap } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -78,7 +78,7 @@ export default function HomePage() {
                         width={600}
                         height={400}
                         className="w-full h-full object-cover"
-                        data-ai-hint="abstract technology"
+                        data-ai-hint="futuristic robot"
                     />
                 </div>
                 <div>
@@ -146,8 +146,16 @@ export default function HomePage() {
         </section>
 
         {/* Call to Action Section */}
-        <section className="bg-primary/10 py-20 px-4">
-            <div className="container mx-auto text-center max-w-2xl">
+        <section className="relative bg-primary/10 py-20 px-4">
+             <Image
+                src="https://placehold.co/1920x400.png"
+                alt="Abstract background"
+                layout="fill"
+                objectFit="cover"
+                className="opacity-10"
+                data-ai-hint="abstract network"
+            />
+            <div className="container mx-auto text-center max-w-2xl relative z-10">
                 <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
                 <p className="text-muted-foreground mb-8">
                     Create an account to save your chat history and unlock a higher daily limit, or start chatting right away as a guest.
