@@ -77,7 +77,7 @@ export default function HomePage() {
                 </p>
                 <div className="relative rounded-lg overflow-hidden shadow-2xl group">
                     <Image
-                        src="https://pomf2.lain.la/f/3zejt5bp.jpeg"
+                        src="/uploads/dashboard-image.jpeg"
                         alt="Developer working on a project"
                         width={1200}
                         height={600}
