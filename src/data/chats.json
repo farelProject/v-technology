@@ -21,6 +21,30 @@
           "type": "text"
         }
       ]
+    },
+    {
+      "id": "1753946216326",
+      "userId": "1753946107839",
+      "title": ".play mangu...",
+      "timestamp": "2025-07-31T07:16:56.326Z",
+      "messages": [
+        {
+          "id": "1753946227664-0.8278158154878406",
+          "role": "user",
+          "content": ".play mangu",
+          "userId": "1753946107839",
+          "isLoading": false
+        },
+        {
+          "id": "1753946227666",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Here is the audio for \"Mangu - Fourtwnty (Lyrics)\"",
+          "type": "audio",
+          "audio_url": "https://youtube.com/watch?v=ZHiU96iAffo",
+          "audio_title": "Mangu - Fourtwnty (Lyrics)"
+        }
+      ]
     }
   ]
 }

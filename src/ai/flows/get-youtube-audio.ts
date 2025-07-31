@@ -43,13 +43,15 @@ const getYoutubeAudioFlow = ai.defineFlow(
         const response = await fetch(`https://api.diioffc.web.id/api/search/ytplay?query=${encodeURIComponent(input.query)}`);
         
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error("API request failed:", response.status, errorText);
             return { success: false, message: 'Failed to fetch from API.' };
         }
         
         const data = await response.json();
         
-        // The API returns a 'result' object on success
-        if (data.result && data.result.url) {
+        // Check for the success status and the presence of the result object
+        if (data.status === true && data.result && data.result.url) {
              return {
                 success: true,
                 title: data.result.title,
@@ -57,6 +59,7 @@ const getYoutubeAudioFlow = ai.defineFlow(
                 audioUrl: data.result.url,
             };
         } else {
+             // Use the message from the API if it exists, otherwise provide a generic error
              return { success: false, message: data.message || 'Could not find audio for this query.' };
         }
 
