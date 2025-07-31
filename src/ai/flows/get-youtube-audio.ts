@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -47,12 +48,13 @@ const getYoutubeAudioFlow = ai.defineFlow(
         
         const data = await response.json();
         
-        if (data.status && data.data?.url) {
+        // The API returns a 'result' object on success
+        if (data.result && data.result.url) {
              return {
                 success: true,
-                title: data.data.title,
-                imageUrl: data.data.thumb,
-                audioUrl: data.data.url,
+                title: data.result.title,
+                imageUrl: data.result.thumb,
+                audioUrl: data.result.url,
             };
         } else {
              return { success: false, message: data.message || 'Could not find audio for this query.' };
