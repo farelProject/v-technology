@@ -144,6 +144,33 @@ export default function HomePage() {
                 </div>
             </div>
         </section>
+        
+        {/* From Our Gallery Section */}
+        <section className="py-20 px-4 bg-background">
+            <div className="container mx-auto max-w-5xl">
+                <h2 className="text-3xl font-bold text-center mb-2">From Our Gallery</h2>
+                <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+                    A glimpse into the creative and professional content you can generate with VTech AI.
+                </p>
+                <div className="relative rounded-lg overflow-hidden shadow-2xl group">
+                    <Image
+                        src="https://placehold.co/1200x600.png"
+                        alt="Developer working on a project"
+                        width={1200}
+                        height={600}
+                        className="w-full h-full object-cover"
+                        data-ai-hint="developer coding"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                    <div className="absolute bottom-0 left-0 p-8 text-white">
+                        <h3 className="text-3xl font-bold mb-2">Code, Create, and Collaborate</h3>
+                        <p className="max-w-lg">
+                            VTech AI is the perfect partner for your development workflow. Generate boilerplate code, debug complex issues, or brainstorm new architectural patterns to bring your ideas to life faster.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         {/* Call to Action Section */}
         <section className="relative bg-primary/10 py-20 px-4">
