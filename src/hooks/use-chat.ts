@@ -205,7 +205,7 @@ export function useChat(chatId: string | null) {
         if (isPlayCommand) {
             const query = input.trim().substring(6);
             const result = await getYoutubeAudio({ query });
-            if (result.success) {
+            if (result.success && result.audioUrl) {
                 assistantResponsePayload = {
                     content: `Here is the audio for "${result.title}"`,
                     type: 'audio',

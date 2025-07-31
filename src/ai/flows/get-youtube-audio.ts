@@ -50,13 +50,13 @@ const getYoutubeAudioFlow = ai.defineFlow(
         
         const data = await response.json();
         
-        // Check for the success status and the presence of the result object
-        if (data.status === true && data.result && data.result.url) {
+        // Check for the success status and the presence of the result object and download url
+        if (data.status === true && data.result && data.result.download && data.result.download.url) {
              return {
                 success: true,
                 title: data.result.title,
-                imageUrl: data.result.thumb,
-                audioUrl: data.result.url,
+                imageUrl: data.result.thumbnail,
+                audioUrl: data.result.download.url,
             };
         } else {
              // Use the message from the API if it exists, otherwise provide a generic error
