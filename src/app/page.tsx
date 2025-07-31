@@ -67,48 +67,30 @@ export default function HomePage() {
                 </div>
             </div>
         </section>
-        
-         {/* Why Choose VTech Section */}
-        <section className="py-20 px-4">
-            <div className="container mx-auto max-w-5xl grid md:grid-cols-2 gap-12 items-center">
-                <div className="rounded-lg overflow-hidden shadow-lg">
-                    <Image 
-                        src="https://placehold.co/600x400.png"
-                        alt="AI assistant interacting with user"
-                        width={600}
-                        height={400}
+
+        {/* From Our Gallery Section */}
+        <section className="py-20 px-4 bg-background">
+            <div className="container mx-auto max-w-5xl">
+                <h2 className="text-3xl font-bold text-center mb-2">From Our Gallery</h2>
+                <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+                    A glimpse into the creative and professional content you can generate with VTech AI.
+                </p>
+                <div className="relative rounded-lg overflow-hidden shadow-2xl group">
+                    <Image
+                        src="https://placehold.co/1200x600.png"
+                        alt="Developer working on a project"
+                        width={1200}
+                        height={600}
                         className="w-full h-full object-cover"
-                        data-ai-hint="futuristic robot"
+                        data-ai-hint="developer coding"
                     />
-                </div>
-                <div>
-                    <h2 className="text-3xl font-bold mb-4">Why Choose VTech AI?</h2>
-                    <p className="text-muted-foreground mb-6">
-                        Go beyond simple answers. VTech is designed to be a comprehensive tool that adapts to your needs, whether you're a student, professional, or creative.
-                    </p>
-                    <ul className="space-y-4">
-                        <li className="flex items-start">
-                            <CheckCircle className="h-6 w-6 text-primary mr-3 mt-1 flex-shrink-0" />
-                            <div>
-                                <h4 className="font-semibold">Multimodal Power</h4>
-                                <p className="text-muted-foreground">Seamlessly switch between text chat, web search, and image generation in a single interface.</p>
-                            </div>
-                        </li>
-                        <li className="flex items-start">
-                            <CheckCircle className="h-6 w-6 text-primary mr-3 mt-1 flex-shrink-0" />
-                            <div>
-                                <h4 className="font-semibold">User-Centric</h4>
-                                <p className="text-muted-foreground">Save your conversations, customize the AI's personality, and manage your usage with a free account.</p>
-                            </div>
-                        </li>
-                         <li className="flex items-start">
-                            <CheckCircle className="h-6 w-6 text-primary mr-3 mt-1 flex-shrink-0" />
-                            <div>
-                                <h4 className="font-semibold">Always Current</h4>
-                                <p className="text-muted-foreground">With integrated web search, get answers based on the latest information, not just pre-existing knowledge.</p>
-                            </div>
-                        </li>
-                    </ul>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                    <div className="absolute bottom-0 left-0 p-8 text-white">
+                        <h3 className="text-3xl font-bold mb-2">Code, Create, and Collaborate</h3>
+                        <p className="max-w-lg">
+                            VTech AI is the perfect partner for your development workflow. Generate boilerplate code, debug complex issues, or brainstorm new architectural patterns to bring your ideas to life faster.
+                        </p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -144,44 +126,9 @@ export default function HomePage() {
                 </div>
             </div>
         </section>
-        
-        {/* From Our Gallery Section */}
-        <section className="py-20 px-4 bg-background">
-            <div className="container mx-auto max-w-5xl">
-                <h2 className="text-3xl font-bold text-center mb-2">From Our Gallery</h2>
-                <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
-                    A glimpse into the creative and professional content you can generate with VTech AI.
-                </p>
-                <div className="relative rounded-lg overflow-hidden shadow-2xl group">
-                    <Image
-                        src="https://placehold.co/1200x600.png"
-                        alt="Developer working on a project"
-                        width={1200}
-                        height={600}
-                        className="w-full h-full object-cover"
-                        data-ai-hint="developer coding"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                    <div className="absolute bottom-0 left-0 p-8 text-white">
-                        <h3 className="text-3xl font-bold mb-2">Code, Create, and Collaborate</h3>
-                        <p className="max-w-lg">
-                            VTech AI is the perfect partner for your development workflow. Generate boilerplate code, debug complex issues, or brainstorm new architectural patterns to bring your ideas to life faster.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
 
         {/* Call to Action Section */}
-        <section className="relative bg-primary/10 py-20 px-4">
-             <Image
-                src="https://placehold.co/1920x400.png"
-                alt="Abstract background"
-                layout="fill"
-                objectFit="cover"
-                className="opacity-10"
-                data-ai-hint="abstract network"
-            />
+        <section className="bg-primary/10 py-20 px-4">
             <div className="container mx-auto text-center max-w-2xl relative z-10">
                 <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
                 <p className="text-muted-foreground mb-8">
