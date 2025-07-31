@@ -5,7 +5,7 @@ import { AppShell } from '@/components/app-shell';
 import { ChatView } from '@/components/chat/chat-view';
 import { useAuth } from '@/contexts/auth-context';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,8 +17,9 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import Link from 'next/link';
+import { Loader2 } from 'lucide-react';
 
-export default function ChatPage() {
+function ChatPageContent() {
   const { user, isLoading, isFirstVisit, markFirstVisitDone } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -66,4 +67,18 @@ export default function ChatPage() {
       </AlertDialog>
     </>
   );
+}
+
+export default function ChatPage() {
+    return (
+        <Suspense fallback={
+            <AppShell>
+                <div className="flex h-full w-full items-center justify-center">
+                    <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+            </AppShell>
+        }>
+            <ChatPageContent />
+        </Suspense>
+    )
 }
