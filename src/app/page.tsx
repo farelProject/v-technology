@@ -77,12 +77,11 @@ export default function HomePage() {
                 </p>
                 <div className="relative rounded-lg overflow-hidden shadow-2xl group">
                     <Image
-                        src="https://placehold.co/1200x600.png"
+                        src="https://i.ibb.co/6P7M6Vj/image.png"
                         alt="Developer working on a project"
                         width={1200}
                         height={600}
                         className="w-full h-full object-cover"
-                        data-ai-hint="developer coding"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                     <div className="absolute bottom-0 left-0 p-8 text-white">
