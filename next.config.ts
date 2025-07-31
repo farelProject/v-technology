@@ -23,6 +23,12 @@ const nextConfig: NextConfig = {
         hostname: 'i.ibb.co',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'pomf2.lain.la',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
