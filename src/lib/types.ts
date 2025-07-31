@@ -3,8 +3,10 @@ export interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
-  type?: 'text' | 'image';
+  type?: 'text' | 'image' | 'audio';
   image_url?: string;
+  audio_url?: string;
+  audio_title?: string;
   search_results?: { title: string; description: string; link: string }[];
   isLoading?: boolean;
   userId: string;

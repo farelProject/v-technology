@@ -1,12 +1,12 @@
 
 'use client';
 
-import { Bot, User, Download, Copy, ExternalLink, Eye, Loader2 } from 'lucide-react';
+import { Bot, User, Download, Copy, ExternalLink, Eye, Loader2, Music } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -161,6 +161,35 @@ export function ChatMessage({ message }: ChatMessageProps) {
     return <>{content}</>;
   }
 
+  const AudioPlayer = ({ title, audioUrl, imageUrl }: { title?: string, audioUrl?: string, imageUrl?: string }) => {
+    if (!audioUrl || !title) return null;
+
+    return (
+      <Card className="w-full max-w-sm">
+        <CardHeader className='flex-row items-center gap-4'>
+            {imageUrl && <Image src={imageUrl} alt={title} width={64} height={64} className="rounded-md" />}
+            <div className='flex-1'>
+              <CardTitle className="text-base line-clamp-2">{title}</CardTitle>
+            </div>
+        </CardHeader>
+        <CardContent>
+            <audio controls className="w-full">
+                <source src={audioUrl} type="audio/mpeg" />
+                Your browser does not support the audio element.
+            </audio>
+        </CardContent>
+        <CardFooter>
+            <Button asChild className="w-full">
+                <a href={audioUrl} download={`${title}.mp3`}>
+                    <Download className="mr-2 h-4 w-4" />
+                    Download
+                </a>
+            </Button>
+        </CardFooter>
+      </Card>
+    )
+  }
+
 
   return wrapper(
     <div className={cn('flex items-start space-x-4', isUser && 'justify-end')}>
@@ -190,8 +219,12 @@ export function ChatMessage({ message }: ChatMessageProps) {
             </div>
         )}
 
-        {message.image_url && (
+        {message.image_url && message.type !== 'audio' && (
             <ImageDisplay src={message.image_url} alt="Uploaded or generated content" />
+        )}
+        
+        {message.type === 'audio' && (
+            <AudioPlayer title={message.audio_title} audioUrl={message.audio_url} imageUrl={message.image_url} />
         )}
 
         {message.search_results && message.search_results.length > 0 && (
@@ -239,7 +272,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
               <Copy className="h-4 w-4" />
               <span className="sr-only">Copy message</span>
             </Button>
-            {message.image_url && (
+            {message.image_url && message.type !== 'audio' && (
               <Button
                 variant="ghost"
                 size="icon"
