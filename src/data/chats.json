@@ -70,6 +70,28 @@
           "audio_title": "Mangu - Fourtwnty (Lyrics)"
         }
       ]
+    },
+    {
+      "id": "1753947866662",
+      "userId": "1753946107839",
+      "title": "Explain Einstein's theory of relativity....",
+      "timestamp": "2025-07-31T07:44:26.662Z",
+      "messages": [
+        {
+          "id": "1753947874328-0.7611765548500984",
+          "role": "user",
+          "content": "Explain Einstein's theory of relativity.",
+          "userId": "1753946107839",
+          "isLoading": false
+        },
+        {
+          "id": "1753947874329",
+          "role": "assistant",
+          "userId": "assistant",
+          "content": "Hello there! As your friendly neighborhood Doctor AI, I'd be delighted to explain Einstein's theory of relativity. Now, there are actually two parts to it:\n\n1.  **Special Relativity (1905):** Imagine you're on a train moving super smoothly at a constant speed. Special relativity deals with how space and time are perceived when you're moving at a constant speed relative to someone else.\n\n    *   **Key Ideas:**\n        *   **The laws of physics are the same for everyone** moving at a constant speed. Whether you're on the train or standing still outside, the laws of physics work the same way.\n        *   **The speed of light is constant for everyone,** no matter how fast they're moving. This is a mind-bender! If you shine a flashlight on the train, both you and someone standing still outside will measure the light's speed the same.\n    *   **Consequences:**\n        *   **Time Dilation:** Time can pass differently for people moving at different speeds. The faster you move, the slower time passes *for you* relative to someone who is standing still.\n        *   **Length Contraction:** Objects appear shorter in the direction they're moving as they approach the speed of light.\n        *   **Mass Increase:** An object's mass increases as it approaches the speed of light.\n        *   **E=mc²:** This is the famous equation! It shows that energy (E) and mass (m) are interchangeable, with the speed of light (c) as the conversion factor. A tiny bit of mass can be converted into a huge amount of energy!\n\n2.  **General Relativity (1915):** This is the big one! It deals with gravity. Instead of thinking of gravity as a force, Einstein said it's a curve in the fabric of space and time caused by mass and energy.\n\n    *   **Key Idea:**\n        *   **Gravity is the curvature of spacetime.** Imagine a bowling ball placed on a trampoline. It creates a dip, right? That's how massive objects warp spacetime. Other objects then move along these curves, which we perceive as gravity.\n    *   **Consequences:**\n        *   **Bending of Light:** Gravity can bend the path of light. This has been observed during solar eclipses when the light from stars bends around the sun.\n        *   **Gravitational Time Dilation:** Time passes slower in stronger gravitational fields. This means time passes slightly slower at sea level than on top of a mountain.\n        *   **Black Holes:** Extremely massive objects can warp spacetime so much that nothing, not even light, can escape their gravity.\n        *   **Gravitational Waves:** Accelerating massive objects can create ripples in spacetime, like dropping a pebble in a pond. These waves can travel across the universe.\n\nIn a nutshell, special relativity deals with constant motion and the constant speed of light, while general relativity deals with gravity as the curvature of spacetime. Both theories have revolutionized our understanding of the universe! Did you find that helpful?",
+          "type": "text"
+        }
+      ]
     }
   ]
 }
