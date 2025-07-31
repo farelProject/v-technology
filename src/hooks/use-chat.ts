@@ -7,7 +7,6 @@ import { useToast } from './use-toast';
 import { chatWithSearch } from '@/ai/flows/chat-with-search';
 import { generateImage } from '@/ai/flows/generate-image';
 import { chat } from '@/ai/flows/chat';
-import { getYoutubeAudio } from '@/ai/flows/get-youtube-audio';
 import type { Message, AiMode, ChatSession } from '@/lib/types';
 import { useSettings } from '@/contexts/settings-context';
 import { useAuth } from '@/contexts/auth-context';
@@ -122,9 +121,6 @@ export function useChat(chatId: string | null) {
         });
       return;
     }
-    
-    // Check for .play command
-    const isPlayCommand = mode === 'chat' && input.trim().startsWith('.play ');
 
     const userMessage: Message = {
       id: `${Date.now()}-${Math.random()}`,
@@ -202,24 +198,7 @@ export function useChat(chatId: string | null) {
         const queryWithInstruction = `${systemInstruction}\n\nQuery: ${input}`;
         let assistantResponsePayload: Omit<Message, 'id' | 'role' | 'userId'>;
 
-        if (isPlayCommand) {
-            const query = input.trim().substring(6);
-            const result = await getYoutubeAudio({ query });
-            if (result.success && result.audioUrl) {
-                assistantResponsePayload = {
-                    content: `Here is the audio for "${result.title}"`,
-                    type: 'audio',
-                    image_url: result.imageUrl,
-                    audio_url: result.audioUrl,
-                    audio_title: result.title,
-                }
-            } else {
-                assistantResponsePayload = {
-                    content: result.message || 'Could not retrieve audio.',
-                    type: 'text'
-                }
-            }
-        } else if (mode === 'chat') {
+        if (mode === 'chat') {
           const result = await chat({ query: queryWithInstruction, file: fileForAi });
           assistantResponsePayload = {
             content: result.response,
